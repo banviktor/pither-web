@@ -1,3 +1,5 @@
+# Compass cache.
 .sass-cache/
-css/
 
+# PhpStorm files.
+.idea
