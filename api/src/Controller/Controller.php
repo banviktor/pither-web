@@ -48,6 +48,7 @@ abstract class Controller {
         $route . '/{id}' => 'modify',
       ],
       'delete' => [
+        $route => 'deleteAll',
         $route . '/{id}' => 'delete',
       ],
     ];
@@ -153,6 +154,16 @@ abstract class Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function delete(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function deleteAll(Request $request, Application $app) {
     throw new AccessDeniedHttpException();
   }
 
