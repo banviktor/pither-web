@@ -7,6 +7,8 @@
 namespace PiTher\Controller;
 
 use PiTher\Model\User;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -32,7 +34,23 @@ abstract class Controller {
    *   ['method' => ['/path' => 'function']]
    */
   protected static function routes() {
-    return [];
+    $class = end(explode('\\', get_called_class()));
+    $route = '/' . strtolower(str_replace('Controller', '', $class));
+    return [
+      'get' => [
+        $route => 'getAll',
+        $route . '/{id}' => 'get',
+      ],
+      'post' => [
+        $route => 'create',
+      ],
+      'patch' => [
+        $route . '/{id}' => 'modify',
+      ],
+      'delete' => [
+        $route . '/{id}' => 'delete',
+      ],
+    ];
   }
 
   /**
@@ -87,4 +105,55 @@ abstract class Controller {
     }
     return TRUE;
   }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function get(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function getAll(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function create(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function modify(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function delete(Request $request, Application $app) {
+    throw new AccessDeniedHttpException();
+  }
+
 }
