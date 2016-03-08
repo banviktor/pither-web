@@ -23,6 +23,7 @@ class UsersController extends Controller {
     return [
       'get' => [
         '/logout' => 'logout',
+        '/users' => 'getAll',
         '/users/{name}' => 'get',
       ],
       'post' => [
@@ -65,6 +66,16 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function get(Request $request, Application $app) {
+    throw new BadRequestHttpException();
+  }
+
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function getAll(Request $request, Application $app) {
     throw new BadRequestHttpException();
   }
 
