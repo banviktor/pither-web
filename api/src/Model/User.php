@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \PiTher\User.
+ * Contains \PiTher\Model\User.
  */
 
-namespace PiTher;
+namespace PiTher\Model;
 
 /**
  * Class User

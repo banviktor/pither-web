@@ -6,7 +6,7 @@
 
 namespace PiTher\Controller;
 
-use PiTher\User;
+use PiTher\Model\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
