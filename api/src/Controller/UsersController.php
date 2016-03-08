@@ -15,6 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  * @package PiTher\Controller
  */
 class UsersController extends Controller {
+
   /**
    * {@inheritdoc}
    */
@@ -96,4 +97,5 @@ class UsersController extends Controller {
   public function delete(Request $request, Application $app) {
     throw new BadRequestHttpException();
   }
+
 }
