@@ -56,9 +56,9 @@ CREATE TABLE `sensor_log` (
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
-  `key` varchar(32) NOT NULL,
+  `id` varchar(32) NOT NULL,
   `value` blob,
-  PRIMARY KEY (`key`)
+  PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS `users`;
