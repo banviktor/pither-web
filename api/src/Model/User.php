@@ -11,6 +11,7 @@ namespace PiTher\Model;
  * @package PiTher
  */
 class User {
+
   /**
    * Returns the current user.
    *
@@ -59,4 +60,5 @@ class User {
   public function hasPermissions(array $permissions) {
     return count(array_intersect($this->getPermissions(), $permissions)) >= count($permissions);
   }
+
 }

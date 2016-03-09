@@ -18,6 +18,10 @@ use PiTher\Controller\UsersController;
  * @package PiTher
  */
 class Application extends \Silex\Application {
+
+  /**
+   * {@inheritdoc}
+   */
   public function run(Request $request = NULL) {
     HeatingController::init($this);
     OverridesController::init($this);
@@ -27,4 +31,5 @@ class Application extends \Silex\Application {
     UsersController::init($this);
     parent::run($request);
   }
+
 }

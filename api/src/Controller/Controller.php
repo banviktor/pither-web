@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * @package PiTher\Controller
  */
 abstract class Controller {
+
   /**
    * @param \Silex\Application $app
    */
