@@ -18,15 +18,28 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 abstract class Controller {
 
   /**
+   * @var \Silex\Application $app
+   */
+  protected static $app;
+
+  /**
    * @param \Silex\Application $app
    */
   public static function init(&$app) {
+    static::$app = $app;
     $class = get_called_class();
     foreach (static::routes() as $method => $routes) {
       foreach ($routes as $route => $handler) {
         $app->$method($route, $class . '::' . $handler);
       }
     }
+  }
+
+  /**
+   * @return \Doctrine\DBAL\Connection
+   */
+  protected function db() {
+    return static::$app['db'];
   }
 
   /**
@@ -125,6 +138,7 @@ abstract class Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function getAll(Request $request, Application $app) {
+    return '';
     throw new AccessDeniedHttpException();
   }
 
