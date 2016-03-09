@@ -6,6 +6,9 @@
 
 namespace PiTher\Controller;
 
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Class SettingsController
  * @package PiTher\Controller

@@ -6,6 +6,9 @@
 
 namespace PiTher\Controller;
 
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Class OverridesController
  * @package PiTher\Controller
