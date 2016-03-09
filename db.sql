@@ -117,4 +117,5 @@ CREATE TABLE `users_roles` (
   `role_id` varchar(32) NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`)
 );
+INSERT INTO users_roles VALUES (0,'anon');
 INSERT INTO users_roles VALUES (1,'owner');

@@ -6,6 +6,7 @@
 
 namespace PiTher\Controller;
 
+use PiTher\Model\User;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -33,7 +34,8 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function logout(Request $request, Application $app) {
-    throw new BadRequestHttpException();
+    session_unset();
+    return $app->json(TRUE);
   }
 
   /**
@@ -43,7 +45,15 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function login(Request $request, Application $app) {
-    throw new BadRequestHttpException();
+    $user = $request->get('user');
+    $pass = $request->get('pass');
+
+    $obj = User::loadByCredentials($user, $pass);
+    if ($obj) {
+      $_SESSION['uid'] = $obj->getId();
+      return $app->json($obj->get());
+    }
+    return $app->json(FALSE);
   }
 
 }
