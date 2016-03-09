@@ -204,7 +204,7 @@ class User extends Model {
    *   Whether the user has the given permissions.
    */
   public function hasPermissions(array $permissions) {
-    return count(array_intersect($this->getPerms(), $permissions)) >= count($permissions);
+    return count(array_intersect(array_keys($this->getPerms()), $permissions)) >= count($permissions);
   }
 
 }

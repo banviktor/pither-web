@@ -66,6 +66,7 @@ INSERT INTO roles_permissions VALUES ('owner','manage_users');
 INSERT INTO roles_permissions VALUES ('user','access_heating_log');
 INSERT INTO roles_permissions VALUES ('user','access_rules');
 INSERT INTO roles_permissions VALUES ('user','access_sensor_log');
+INSERT INTO roles_permissions VALUES ('user','access_settings');
 INSERT INTO roles_permissions VALUES ('user','add_guests');
 INSERT INTO roles_permissions VALUES ('user','manage_overrides');
 INSERT INTO roles_permissions VALUES ('user','manage_rules');

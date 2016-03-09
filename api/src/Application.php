@@ -46,6 +46,10 @@ class Application extends \Silex\Application {
     SettingsController::init($this);
     UsersController::init($this);
 
+    $this->error(function($exception) {
+      return $this->json(FALSE);
+    });
+
     parent::run($request);
   }
 

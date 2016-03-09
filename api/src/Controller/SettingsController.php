@@ -20,6 +20,7 @@ class SettingsController extends Controller {
    * {@inheritdoc}
    */
   public function getAll(Request $request, Application $app) {
+    $this->checkPermissions(['access_settings']);
     $settings = [];
     foreach (Setting::loadAll() as $setting) {
       $settings[] = $setting->get();
@@ -31,6 +32,7 @@ class SettingsController extends Controller {
    * {@inheritdoc}
    */
   public function get(Request $request, Application $app) {
+    $this->checkPermissions(['access_settings']);
     $id = $request->get('id');
 
     $setting = Setting::load($id);
@@ -45,6 +47,7 @@ class SettingsController extends Controller {
    * {@inheritdoc}
    */
   public function modify(Request $request, Application $app) {
+    $this->checkPermissions(['access_settings', 'manage_settings']);
     $id = $request->get('id');
     $value = $request->getContent();
 
