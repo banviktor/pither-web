@@ -21,6 +21,16 @@ CREATE TABLE `permissions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title_UNIQUE` (`title`)
 );
+INSERT INTO permissions VALUES ('access_heating_log','Access heating log');
+INSERT INTO permissions VALUES ('access_rules','Access rules and overrides');
+INSERT INTO permissions VALUES ('access_sensor_log','Access sensor log');
+INSERT INTO permissions VALUES ('access_settings','Access settings');
+INSERT INTO permissions VALUES ('add_guests','Add guests');
+INSERT INTO permissions VALUES ('add_users','Add users');
+INSERT INTO permissions VALUES ('manage_overrides','Manage overrides');
+INSERT INTO permissions VALUES ('manage_rules','Manage rules');
+INSERT INTO permissions VALUES ('manage_settings','Manage settings');
+INSERT INTO permissions VALUES ('manage_users','Manage users');
 
 DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
@@ -29,6 +39,10 @@ CREATE TABLE `roles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title_UNIQUE` (`title`)
 );
+INSERT INTO roles VALUES ('anon','Anonymous');
+INSERT INTO roles VALUES ('guest','Guest');
+INSERT INTO roles VALUES ('owner','Owner');
+INSERT INTO roles VALUES ('user','User');
 
 DROP TABLE IF EXISTS `roles_permissions`;
 CREATE TABLE `roles_permissions` (
@@ -36,6 +50,25 @@ CREATE TABLE `roles_permissions` (
   `perm_id` varchar(32) NOT NULL,
   PRIMARY KEY (`role_id`,`perm_id`)
 );
+INSERT INTO roles_permissions VALUES ('anon','access_rules');
+INSERT INTO roles_permissions VALUES ('guest','access_rules');
+INSERT INTO roles_permissions VALUES ('guest','manage_overrides');
+INSERT INTO roles_permissions VALUES ('owner','access_heating_log');
+INSERT INTO roles_permissions VALUES ('owner','access_rules');
+INSERT INTO roles_permissions VALUES ('owner','access_sensor_log');
+INSERT INTO roles_permissions VALUES ('owner','access_settings');
+INSERT INTO roles_permissions VALUES ('owner','add_guests');
+INSERT INTO roles_permissions VALUES ('owner','add_users');
+INSERT INTO roles_permissions VALUES ('owner','manage_overrides');
+INSERT INTO roles_permissions VALUES ('owner','manage_rules');
+INSERT INTO roles_permissions VALUES ('owner','manage_settings');
+INSERT INTO roles_permissions VALUES ('owner','manage_users');
+INSERT INTO roles_permissions VALUES ('user','access_heating_log');
+INSERT INTO roles_permissions VALUES ('user','access_rules');
+INSERT INTO roles_permissions VALUES ('user','access_sensor_log');
+INSERT INTO roles_permissions VALUES ('user','add_guests');
+INSERT INTO roles_permissions VALUES ('user','manage_overrides');
+INSERT INTO roles_permissions VALUES ('user','manage_rules');
 
 DROP TABLE IF EXISTS `rules`;
 CREATE TABLE `rules` (
@@ -60,6 +93,8 @@ CREATE TABLE `settings` (
   `value` blob,
   PRIMARY KEY (`id`)
 );
+INSERT INTO settings VALUES ('default_unit','c');
+INSERT INTO settings VALUES ('fallback_temp','17');
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -74,6 +109,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `name_UNIQUE` (`name`),
   UNIQUE KEY `email_UNIQUE` (`email`)
 );
+INSERT INTO users (`id`, `name`, email, pass) VALUES (1,'admin','admin@example.com',SHA1('admin'));
 
 DROP TABLE IF EXISTS `users_roles`;
 CREATE TABLE `users_roles` (
@@ -81,3 +117,4 @@ CREATE TABLE `users_roles` (
   `role_id` varchar(32) NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`)
 );
+INSERT INTO users_roles VALUES (1,'owner');
