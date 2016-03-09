@@ -6,6 +6,7 @@
 
 namespace PiTher\Controller;
 
+use PiTher\Model\Setting;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,10 +20,9 @@ class SettingsController extends Controller {
    * {@inheritdoc}
    */
   public function getAll(Request $request, Application $app) {
-    $res = $this->db()->fetchAll("SELECT * FROM settings");
     $settings = [];
-    foreach ($res as $row) {
-      $settings[$row['key']] = $row['value'];
+    foreach (Setting::loadAll() as $setting) {
+      $settings[] = $setting->get();
     }
     return $app->json($settings);
   }
@@ -33,8 +33,12 @@ class SettingsController extends Controller {
   public function get(Request $request, Application $app) {
     $id = $request->get('id');
 
-    $setting = $this->db()->fetchAssoc("SELECT * FROM settings WHERE id = ?", [$id]);
-    return $app->json($setting['value']);
+    $setting = Setting::load($id);
+    if (empty($setting)) {
+      return $app->json(FALSE);
+    }
+
+    return $app->json($setting->getValue());
   }
 
   /**
@@ -44,8 +48,12 @@ class SettingsController extends Controller {
     $id = $request->get('id');
     $value = $request->getContent();
 
-    $res = $this->db()->update('settings', ['value' => $value], ['id' => $id]);
-    return $app->json($res > 0);
+    $setting = Setting::load($id);
+    if (empty($setting)) {
+      return $app->json(FALSE);
+    }
+
+    return $app->json($setting->setValue($value));
   }
 
 }

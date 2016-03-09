@@ -12,6 +12,7 @@ use PiTher\Controller\RulesController;
 use PiTher\Controller\SensorController;
 use PiTher\Controller\SettingsController;
 use PiTher\Controller\UsersController;
+use PiTher\Model\Model;
 use Silex\Provider\DoctrineServiceProvider;
 
 /**
@@ -37,6 +38,7 @@ class Application extends \Silex\Application {
       ),
     ));
 
+    Model::init($this);
     HeatingController::init($this);
     OverridesController::init($this);
     RulesController::init($this);
