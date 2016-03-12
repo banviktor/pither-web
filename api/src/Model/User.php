@@ -122,16 +122,22 @@ class User extends Model {
     $this->last_login = $last_login;
     $this->created = $created;
 
-    // Fetch roles.
-    $roles = static::$db->fetchAll("SELECT `r`.`id`, `r`.`title` FROM `roles` `r`, `users_roles` `ur` WHERE `ur`.`role_id` = `r`.`id` AND `ur`.`user_id` = ?", [$id]);
-    foreach ($roles as $role) {
-      $this->roles[$role['id']] = $role['title'];
-    }
+    if ($id >= 0) {
+      // Fetch roles.
+      $roles = static::$db->fetchAll("SELECT `r`.`id`, `r`.`title` FROM `roles` `r`, `users_roles` `ur` WHERE `ur`.`role_id` = `r`.`id` AND `ur`.`user_id` = ?", [$id]);
+      foreach ($roles as $role) {
+        $this->roles[$role['id']] = $role['title'];
+      }
 
-    // Fetch permissions.
-    $perms = static::$db->fetchAll("SELECT `p`.`id`, `p`.`title` FROM `users_roles` `ur`, `roles_permissions` `rp`, `permissions` `p` WHERE `ur`.`role_id` = `rp`.`role_id` AND `rp`.`perm_id` = `p`.`id` AND `ur`.`user_id` = ?", [$id]);
-    foreach ($perms as $perm) {
-      $this->perms[$perm['id']] = $perm['title'];
+      // Fetch permissions.
+      $perms = static::$db->fetchAll("SELECT `p`.`id`, `p`.`title` FROM `users_roles` `ur`, `roles_permissions` `rp`, `permissions` `p` WHERE `ur`.`role_id` = `rp`.`role_id` AND `rp`.`perm_id` = `p`.`id` AND `ur`.`user_id` = ?", [$id]);
+      foreach ($perms as $perm) {
+        $this->perms[$perm['id']] = $perm['title'];
+      }
+    }
+    else {
+      $this->roles = [];
+      $this->perms = [];
     }
   }
 
