@@ -33,4 +33,21 @@ class SensorController extends Controller {
     return $app->json($temp / 10);
   }
 
+  /**
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param \Silex\Application $app
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function log(Request $request, Application $app) {
+    $start = (int) $request->get('start');
+    $end = (int) $request->get('end');
+
+    $temps = [];
+    for ($t = $start; $t <= $end; $t += 60) {
+      $temps[$t] = rand(2902, 2952);
+    }
+    return $app->json($temps);
+  }
+
 }
