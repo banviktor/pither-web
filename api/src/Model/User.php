@@ -322,18 +322,27 @@ class User extends Model {
       'last_login' => $this->last_login,
     ];
     if ($this->id < 0) {
+      $data = array_filter($data, function($val) {
+        if ($val === FALSE) {
+          return FALSE;
+        }
+        return TRUE;
+      });
       static::$db->insert('users', $data);
+      $this->id = static::$db->lastInsertId();
     }
     else {
       static::$db->update('users', $data, ['id' => $this->id]);
     }
 
-    static::$db->delete('users_roles', ['user_id' => $this->id]);
-    foreach (array_keys($this->roles) as $role_id) {
-      static::$db->insert('users_roles', [
-        'user_id' => $this->id,
-        'role_id' => $role_id,
-      ]);
+    if (is_numeric($this->id) && $this->id > 0) {
+      static::$db->delete('users_roles', ['user_id' => $this->id]);
+      foreach (array_keys($this->roles) as $role_id) {
+        static::$db->insert('users_roles', [
+          'user_id' => $this->id,
+          'role_id' => $role_id,
+        ]);
+      }
     }
     return TRUE;
   }

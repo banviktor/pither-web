@@ -104,6 +104,43 @@ class UsersController extends Controller {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function create(Request $request, Application $app) {
+    $this->checkPermissions(['create_users']);
+    $required = ['name', 'email', 'pass'];
+    foreach ($required as $field) {
+      if (!$request->request->has($field)) {
+        return $app->json(FALSE);
+      }
+    }
+
+    $user = new User(-1, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
+    if ($email = $request->get('email')) {
+      $user->setEmail($email);
+    }
+    if ($name = $request->get('name')) {
+      $user->setName($name);
+    }
+    if ($pass = $request->get('pass')) {
+      $user->setPass($pass);
+    }
+    if ($unit = $request->get('unit')) {
+      $user->setUnit($unit);
+    }
+    if ($roles = $request->get('roles')) {
+      $roles = explode(',', $roles);
+      $set_roles = [];
+      foreach ($roles as $role_id) {
+        $set_roles[$role_id] = TRUE;
+      }
+      $user->setRoles($set_roles);
+    }
+
+    return $app->json($user->save());
+  }
+
+  /**
    * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Silex\Application $app
    *
