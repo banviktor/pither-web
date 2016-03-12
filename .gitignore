@@ -3,3 +3,6 @@
 
 # PhpStorm files.
 .idea
+
+# Configuration files.
+api/config.php
