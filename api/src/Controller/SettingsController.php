@@ -56,7 +56,7 @@ class SettingsController extends Controller {
       return $app->json(FALSE);
     }
 
-    return $app->json($setting->setValue($value));
+    return $app->json($setting->setValue($value)->save());
   }
 
 }

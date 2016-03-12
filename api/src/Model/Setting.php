@@ -13,7 +13,17 @@ namespace PiTher\Model;
 class Setting extends Model {
 
   /**
+   * @param array $row
+   *
+   * @return \PiTher\Model\Setting
+   */
+  public static function loadByRow(array $row) {
+    return new Setting($row['id'], $row['value']);
+  }
+
+  /**
    * @param $id
+   *
    * @return \PiTher\Model\Setting
    */
   public static function load($id) {
@@ -21,7 +31,7 @@ class Setting extends Model {
     if (empty($row)) {
       return NULL;
     }
-    return new Setting($row['id'], $row['value']);
+    return static::loadByRow($row);
   }
 
   /**
@@ -31,7 +41,7 @@ class Setting extends Model {
     $res = static::$db->fetchAll("SELECT * FROM settings");
     $settings = [];
     foreach ($res as $row) {
-      $settings[] = new Setting($row['id'], $row['value']);
+      $settings[] = static::loadByRow($row);
     }
     return $settings;
   }
@@ -78,15 +88,19 @@ class Setting extends Model {
 
   /**
    * @param mixed $value
-   * @return bool
+   *
+   * @return $this
    */
   public function setValue($value) {
-    if ($this->value == $value) {
-      return TRUE;
-    }
     $this->value = $value;
-    $affected = $this->db()->update('settings', ['value' => $value], ['id' => $this->id]);
-    return $affected > 0;
+    return $this;
+  }
+
+  /**
+   * @return bool
+   */
+  public function save() {
+    return $this->db()->update('settings', ['value' => $this->value], ['id' => $this->id]) > 0;
   }
 
 }
