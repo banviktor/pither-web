@@ -46,6 +46,14 @@ class Override extends Model {
     return $overrides;
   }
 
+  /**
+   * @return bool
+   */
+  public static function deleteAll() {
+    static::$db->exec("DELETE FROM overrides");
+    return TRUE;
+  }
+
   /** @var int $id */
   protected $id;
   /** @var string $start */

@@ -46,6 +46,14 @@ class Rule extends Model {
     return $rules;
   }
 
+  /**
+   * @return bool
+   */
+  public static function deleteAll() {
+    static::$db->exec("DELETE FROM rules");
+    return TRUE;
+  }
+
   /** @var int $id */
   protected $id;
   /** @var int $day */
