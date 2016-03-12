@@ -72,7 +72,35 @@ class UsersController extends Controller {
     if (!$manage_users && !$self) {
       return $app->json(FALSE);
     }
-    return $app->json($user->edit($request->request->all()));
+
+    if ($email = $request->get('email')) {
+      $user->setEmail($email);
+    }
+    if ($name = $request->get('name')) {
+      $user->setName($name);
+    }
+    if ($pass = $request->get('pass')) {
+      $user->setPass($pass);
+    }
+    if ($unit = $request->get('unit')) {
+      $user->setUnit($unit);
+    }
+    if ($role_id = $request->get('grant_role')) {
+      $user->grantRole($role_id);
+    }
+    if ($role_id = $request->get('revoke_role')) {
+      $user->revokeRole($role_id);
+    }
+    if ($roles = $request->get('roles')) {
+      $roles = explode(',', $roles);
+      $set_roles = [];
+      foreach ($roles as $role_id) {
+        $set_roles[$role_id] = TRUE;
+      }
+      $user->setRoles($set_roles);
+    }
+
+    return $app->json($user->save());
   }
 
   /**
@@ -82,12 +110,13 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function login(Request $request, Application $app) {
-    $user = $request->get('user');
+    $name_email = $request->get('user');
     $pass = $request->get('pass');
 
-    $obj = User::loadByCredentials($user, $pass);
-    if ($obj) {
-      $_SESSION['uid'] = $obj->getId();
+    $user = User::loadByCredentials($name_email, $pass);
+    if ($user) {
+      $_SESSION['uid'] = $user->getId();
+      $user->setLastLogin()->save();
       return $app->json(TRUE);
     }
     return $app->json(FALSE);

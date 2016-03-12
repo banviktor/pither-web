@@ -13,69 +13,21 @@ namespace PiTher\Model;
 class User extends Model {
 
   /**
-   * Returns the current user.
-   *
-   * @return \PiTher\Model\User
-   *   The current user.
-   */
-  public static function currentUser() {
-    if (!empty($_SESSION['uid'])) {
-      return User::load($_SESSION['uid']);
-    }
-    return User::anonymous();
-  }
-
-  /**
-   * Loads the anonymous user.
-   *
-   * @return \PiTher\Model\User
-   */
-  public static function anonymous() {
-    return new User(0, 'Anonymous', '', 'c', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
-  }
-
-  /**
    * @param array $row
+   *
    * @return \PiTher\Model\User
    */
   public static function loadByRow(array $row) {
-    return new User($row['id'], $row['name'], $row['email'], $row['unit'], $row['last_login'], $row['created']);
+    return new User($row['id'], $row['name'], $row['email'], $row['pass'], $row['unit'], $row['last_login'], $row['created']);
   }
 
   /**
-   * Loads a User by its ID.
-   *
-   * @param $id
+   * @param int $id
    *
    * @return null|\PiTher\Model\User
    */
   public static function load($id) {
-    $row = static::$db->fetchAssoc("SELECT `id`, `name`, `email`, `unit`, `last_login`, `created` FROM `users` WHERE `id` = ?", [$id]);
-    if (empty($row)) {
-      return NULL;
-    }
-    return static::loadByRow($row);
-  }
-
-  /**
-   * Loads a User by its credentials.
-   *
-   * @param string $user
-   *   Either a name or an e-mail address.
-   * @param string $pass
-   *   Password of the user.
-   *
-   * @return null|\PiTher\Model\User
-   */
-  public static function loadByCredentials($user, $pass) {
-    if (filter_var($user, FILTER_VALIDATE_EMAIL)) {
-      $auth_field = "email";
-    }
-    else {
-      $auth_field = "name";
-    }
-    $sql = "SELECT `id`, `name`, `email`, `unit`, `last_login`, `created` FROM `users` WHERE `" . $auth_field . "` = ? AND `pass` = SHA1(?)";
-    $row = static::$db->fetchAssoc($sql, [$user, $pass]);
+    $row = static::$db->fetchAssoc("SELECT * FROM `users` WHERE `id` = ?", [$id]);
     if (empty($row)) {
       return NULL;
     }
@@ -87,11 +39,49 @@ class User extends Model {
    */
   public static function loadAll() {
     $users = [];
-    $res = static::$db->fetchAll("SELECT `id`, `name`, `email`, `unit`, `last_login`, `created` FROM `users`");
+    $res = static::$db->fetchAll("SELECT * FROM `users`");
     foreach ($res as $row) {
       $users[] = static::loadByRow($row);
     }
     return $users;
+  }
+
+  /**
+   * @param string $user
+   * @param string $pass
+   *
+   * @return null|\PiTher\Model\User
+   */
+  public static function loadByCredentials($user, $pass) {
+    if (filter_var($user, FILTER_VALIDATE_EMAIL)) {
+      $auth_field = "email";
+    }
+    else {
+      $auth_field = "name";
+    }
+    $sql = "SELECT * FROM `users` WHERE `" . $auth_field . "` = ? AND `pass` = SHA1(?)";
+    $row = static::$db->fetchAssoc($sql, [$user, $pass]);
+    if (empty($row)) {
+      return NULL;
+    }
+    return static::loadByRow($row);
+  }
+
+  /**
+   * @return null|\PiTher\Model\User
+   */
+  public static function currentUser() {
+    if (!empty($_SESSION['uid'])) {
+      return User::load($_SESSION['uid']);
+    }
+    return User::anonymous();
+  }
+
+  /**
+   * @return \PiTher\Model\User
+   */
+  public static function anonymous() {
+    return new User(0, 'Anonymous', '', '', 'c', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
   }
 
   /** @var int $id */
@@ -100,6 +90,8 @@ class User extends Model {
   protected $name;
   /** @var string $email */
   protected $email;
+  /** @var string $pass */
+  protected $pass;
   /** @var string $unit */
   protected $unit;
   /** @var string $last_login */
@@ -116,14 +108,16 @@ class User extends Model {
    * @param int $id
    * @param string $name
    * @param string $email
+   * @param string $pass
    * @param string $unit
    * @param string $last_login
    * @param string $created
    */
-  public function __construct($id, $name, $email, $unit, $last_login, $created) {
+  public function __construct($id, $name, $email, $pass, $unit, $last_login, $created) {
     $this->id = $id;
     $this->name = $name;
     $this->email = $email;
+    $this->pass = $pass;
     $this->unit = $unit;
     $this->last_login = $last_login;
     $this->created = $created;
@@ -165,6 +159,13 @@ class User extends Model {
   /**
    * @return string
    */
+  public function getPass() {
+    return $this->pass;
+  }
+
+  /**
+   * @return string
+   */
   public function getUnit() {
     return $this->unit;
   }
@@ -198,14 +199,93 @@ class User extends Model {
   }
 
   /**
-   * Returns whether the user has the given permissions.
+   * @param string $name
    *
-   * @param array $permissions
-   *   The permissions to look for.
-   *
-   * @return bool
-   *   Whether the user has the given permissions.
+   * @return $this
    */
+  public function setName($name) {
+    $this->name = $name;
+    return $this;
+  }
+
+  /**
+   * @param string $email
+   *
+   * @return $this
+   */
+  public function setEmail($email) {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $this->email = $email;
+    }
+    return $this;
+  }
+
+  /**
+   * @param string $pass
+   *
+   * @return $this
+   */
+  public function setPass($pass) {
+    $this->pass = sha1($pass);
+    return $this;
+  }
+
+  /**
+   * @param string $unit
+   *
+   * @return $this
+   */
+  public function setUnit($unit) {
+    if (in_array($unit, ['c', 'f', 'k'])) {
+      $this->unit = $unit;
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param int $last_login
+   *
+   * @return $this
+   */
+  public function setLastLogin($last_login = NULL) {
+    if (!$last_login) {
+      $last_login = time();
+    }
+    $this->last_login = date('Y-m-d H:i:s', $last_login);
+    return $this;
+  }
+
+  /**
+   * @param array $roles
+   *
+   * @return $this
+   */
+  public function setRoles($roles) {
+    $this->roles = $roles;
+    return $this;
+  }
+
+  /**
+   * @param string $role_id
+   *
+   * @return $this
+   */
+  public function revokeRole($role_id) {
+    unset($this->roles[$role_id]);
+    return $this;
+  }
+
+  /**
+   * @param string $role_id
+   *
+   * @return $this
+   */
+  public function grantRole($role_id) {
+    $this->roles[$role_id] = TRUE;
+    return $this;
+  }
+
   public function hasPermissions(array $permissions) {
     return count(array_intersect(array_keys($this->getPerms()), $permissions)) >= count($permissions);
   }
@@ -215,32 +295,38 @@ class User extends Model {
    * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
    */
   public function delete() {
-    if ($this->id == 0) {
+    if ($this->id <= 0) {
       return FALSE;
     }
     return static::$db->delete('users', ['id' => $this->id]) > 0;
   }
 
   /**
-   * @param array $data
    * @return bool
    */
-  public function edit(array $data) {
-    static $editable = ['name', 'email', 'pass', 'unit'];
-    static $unit_values = ['c', 'f', 'k'];
-    foreach ($data as $field_name => $field_value) {
-      if (
-        !in_array($field_name, $editable) ||
-        ($field_name == 'unit' && !in_array(strtolower($field_value), $unit_values))
-      ) {
-        unset($data[$field_name]);
-        continue;
-      }
-      if ($field_name == 'pass') {
-        $data[$field_name] = sha1($field_value);
-      }
+  public function save() {
+    $data = [
+      'name' => $this->name,
+      'email' => $this->email,
+      'pass' => $this->pass,
+      'unit' => $this->unit,
+      'last_login' => $this->last_login,
+    ];
+    if ($this->id < 0) {
+      static::$db->insert('users', $data);
     }
-    return static::$db->update('users', $data, ['id' => $this->id]) > 0;
+    else {
+      static::$db->update('users', $data, ['id' => $this->id]);
+    }
+
+    static::$db->delete('users_roles', ['user_id' => $this->id]);
+    foreach (array_keys($this->roles) as $role_id) {
+      static::$db->insert('users_roles', [
+        'user_id' => $this->id,
+        'role_id' => $role_id,
+      ]);
+    }
+    return TRUE;
   }
 
 }
