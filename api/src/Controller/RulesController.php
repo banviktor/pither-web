@@ -83,4 +83,33 @@ class RulesController extends Controller {
     return $app->json($rule->save());
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function create(Request $request, Application $app) {
+    $this->checkPermissions(['access_rules', 'manage_rules']);
+    $required = ['day', 'start', 'end', 'temp'];
+    foreach ($required as $field) {
+      if (!$request->request->has($field)) {
+        return $app->json(FALSE);
+      }
+    }
+
+    $rule = new Rule(-1, FALSE, FALSE, FALSE, FALSE);
+    if ($day = $request->get('day')) {
+      $rule->setDay($day);
+    }
+    if ($start = $request->get('start')) {
+      $rule->setStart($start);
+    }
+    if ($end = $request->get('end')) {
+      $rule->setEnd($end);
+    }
+    if ($temp = $request->get('temp')) {
+      $rule->setTemp($temp);
+    }
+
+    return $app->json($rule->save());
+  }
+
 }

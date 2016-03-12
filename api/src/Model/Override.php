@@ -161,7 +161,13 @@ class Override extends Model {
       'temp' => $this->temp,
     ];
     if ($this->id <= 0) {
-      return static::$db->insert('overrides', $data);
+      $data = array_filter($data, function($val) {
+        if ($val === FALSE) {
+          return FALSE;
+        }
+        return TRUE;
+      });
+      return static::$db->insert('overrides', $data) > 0;
     }
     return static::$db->update('overrides', $data, ['id' => $this->id]) > 0;
   }

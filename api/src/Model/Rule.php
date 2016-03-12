@@ -67,11 +67,11 @@ class Rule extends Model {
 
   /**
    * Rule constructor.
-   * @param $id
-   * @param $day
-   * @param $start
-   * @param $end
-   * @param $temp
+   * @param int $id
+   * @param int $day
+   * @param string $start
+   * @param string $end
+   * @param float $temp
    */
   public function __construct($id, $day, $start, $end, $temp) {
     $this->id = $id;
@@ -179,7 +179,13 @@ class Rule extends Model {
       'temp' => $this->temp,
     ];
     if ($this->id <= 0) {
-      return static::$db->insert('rules', $data);
+      $data = array_filter($data, function($val) {
+        if ($val === FALSE) {
+          return FALSE;
+        }
+        return TRUE;
+      });
+      return static::$db->insert('rules', $data) > 0;
     }
     return static::$db->update('rules', $data, ['id' => $this->id]) > 0;
   }

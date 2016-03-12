@@ -79,5 +79,31 @@ class OverridesController extends Controller {
 
     return $app->json($override->save());
   }
-  
+
+  /**
+   * {@inheritdoc}
+   */
+  public function create(Request $request, Application $app) {
+    $this->checkPermissions(['access_overrides', 'manage_overrides']);
+    $required = ['start', 'end', 'temp'];
+    foreach ($required as $field) {
+      if (!$request->request->has($field)) {
+        return $app->json(FALSE);
+      }
+    }
+
+    $override = new Override(-1, FALSE, FALSE, FALSE);
+    if ($start = $request->get('start')) {
+      $override->setStart($start);
+    }
+    if ($end = $request->get('end')) {
+      $override->setEnd($end);
+    }
+    if ($temp = $request->get('temp')) {
+      $override->setTemp($temp);
+    }
+
+    return $app->json($override->save());
+  }
+
 }
