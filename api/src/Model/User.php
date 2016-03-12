@@ -94,48 +94,31 @@ class User extends Model {
     return $users;
   }
 
-  /**
-   * @var string $id
-   */
+  /** @var int $id */
   protected $id;
-
-  /**
-   * @var string $name
-   */
+  /** @var string $name */
   protected $name;
-
-  /**
-   * @var string $email
-   */
+  /** @var string $email */
   protected $email;
-
-  /**
-   * @var string $unit
-   */
+  /** @var string $unit */
   protected $unit;
-
-  /**
-   * @var string $last_login
-   */
+  /** @var string $last_login */
   protected $last_login;
-
-  /**
-   * @var string $created
-   */
+  /** @var string $created */
   protected $created;
-
-  /**
-   * @var array $roles
-   */
+  /** @var array $roles */
   protected $roles = [];
-
-  /**
-   * @var array $perms
-   */
+  /** @var array $perms */
   protected $perms = [];
 
   /**
    * User constructor.
+   * @param int $id
+   * @param string $name
+   * @param string $email
+   * @param string $unit
+   * @param string $last_login
+   * @param string $created
    */
   public function __construct($id, $name, $email, $unit, $last_login, $created) {
     $this->id = $id;
@@ -159,7 +142,7 @@ class User extends Model {
   }
 
   /**
-   * @return string
+   * @return int
    */
   public function getId() {
     return $this->id;
