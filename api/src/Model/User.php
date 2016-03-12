@@ -252,7 +252,10 @@ class User extends Model {
     if (!$last_login) {
       $last_login = time();
     }
-    $this->last_login = date('Y-m-d H:i:s', $last_login);
+    if (is_numeric($last_login)) {
+      $last_login = date('Y-m-d H:i:s', $last_login);
+    }
+    $this->last_login = $last_login;
     return $this;
   }
 

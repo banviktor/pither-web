@@ -110,30 +110,44 @@ class Rule extends Model {
 
   /**
    * @param int $day
+   *
+   * @return $this
    */
   public function setDay($day) {
-    $this->day = $day;
+    if ($day >= 1 && $day <= 7) {
+      $this->day = $day;
+    }
+    return $this;
   }
 
   /**
    * @param string $start
+   *
+   * @return $this
    */
   public function setStart($start) {
     $this->start = $start;
+    return $this;
   }
 
   /**
    * @param string $end
+   *
+   * @return $this
    */
   public function setEnd($end) {
     $this->end = $end;
+    return $this;
   }
 
   /**
    * @param float $temp
+   *
+   * @return $this
    */
   public function setTemp($temp) {
     $this->temp = $temp;
+    return $this;
   }
 
   /**
@@ -161,4 +175,5 @@ class Rule extends Model {
     }
     return static::$db->update('rules', $data, ['id' => $this->id]) > 0;
   }
+
 }
