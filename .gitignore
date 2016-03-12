@@ -3,6 +3,3 @@
 
 # PhpStorm files.
 .idea
-
-# App configuration.
-api/config.php
