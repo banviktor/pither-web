@@ -29,6 +29,53 @@ class UsersController extends Controller {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function get(Request $request, Application $app) {
+    $this->checkPermissions(['manage_users']);
+    $id = $request->get('id');
+    $user = User::load($id);
+    return $app->json($user->get());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAll(Request $request, Application $app) {
+    $this->checkPermissions(['manage_users']);
+    $users = [];
+    foreach (User::loadAll() as $user) {
+      $users[] = $user->get();
+    }
+    return $app->json($users);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(Request $request, Application $app) {
+    $this->checkPermissions(['manage_users']);
+    $id = $request->get('id');
+    $user = User::load($id);
+    return $app->json($user->delete());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function modify(Request $request, Application $app) {
+    $id = $request->get('id');
+    $user = User::load($id);
+
+    $manage_users = $this->checkPermissions(['manage_users'], TRUE);
+    $self = $id != 0 && User::currentUser()->getId() == $user->getId();
+    if (!$manage_users && !$self) {
+      return $app->json(FALSE);
+    }
+    return $app->json($user->edit($request->request->all()));
+  }
+
+  /**
    * @param \Symfony\Component\HttpFoundation\Request $request
    * @param \Silex\Application $app
    *
@@ -41,7 +88,7 @@ class UsersController extends Controller {
     $obj = User::loadByCredentials($user, $pass);
     if ($obj) {
       $_SESSION['uid'] = $obj->getId();
-      return $app->json($obj->get());
+      return $app->json(TRUE);
     }
     return $app->json(FALSE);
   }

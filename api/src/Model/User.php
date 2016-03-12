@@ -35,6 +35,14 @@ class User extends Model {
   }
 
   /**
+   * @param array $row
+   * @return \PiTher\Model\User
+   */
+  public static function loadByRow(array $row) {
+    return new User($row['id'], $row['name'], $row['email'], $row['unit'], $row['last_login'], $row['created']);
+  }
+
+  /**
    * Loads a User by its ID.
    *
    * @param $id
@@ -46,7 +54,7 @@ class User extends Model {
     if (empty($row)) {
       return NULL;
     }
-    return new User($row['id'], $row['name'], $row['email'], $row['unit'], $row['last_login'], $row['created']);
+    return static::loadByRow($row);
   }
 
   /**
@@ -71,7 +79,19 @@ class User extends Model {
     if (empty($row)) {
       return NULL;
     }
-    return new User($row['id'], $row['name'], $row['email'], $row['unit'], $row['last_login'], $row['created']);
+    return static::loadByRow($row);
+  }
+
+  /**
+   * @return \PiTher\Model\User[]
+   */
+  public static function loadAll() {
+    $users = [];
+    $res = static::$db->fetchAll("SELECT `id`, `name`, `email`, `unit`, `last_login`, `created` FROM `users`");
+    foreach ($res as $row) {
+      $users[] = static::loadByRow($row);
+    }
+    return $users;
   }
 
   /**
@@ -205,6 +225,39 @@ class User extends Model {
    */
   public function hasPermissions(array $permissions) {
     return count(array_intersect(array_keys($this->getPerms()), $permissions)) >= count($permissions);
+  }
+
+  /**
+   * @return bool
+   * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+   */
+  public function delete() {
+    if ($this->id == 0) {
+      return FALSE;
+    }
+    return static::$db->delete('users', ['id' => $this->id]) > 0;
+  }
+
+  /**
+   * @param array $data
+   * @return bool
+   */
+  public function edit(array $data) {
+    static $editable = ['name', 'email', 'pass', 'unit'];
+    static $unit_values = ['c', 'f', 'k'];
+    foreach ($data as $field_name => $field_value) {
+      if (
+        !in_array($field_name, $editable) ||
+        ($field_name == 'unit' && !in_array(strtolower($field_value), $unit_values))
+      ) {
+        unset($data[$field_name]);
+        continue;
+      }
+      if ($field_name == 'pass') {
+        $data[$field_name] = sha1($field_value);
+      }
+    }
+    return static::$db->update('users', $data, ['id' => $this->id]) > 0;
   }
 
 }
