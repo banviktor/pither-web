@@ -20,7 +20,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function get(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides']);
+    $this->checkPermissions(['access_rules']);
     $id = $request->get('id');
     $override = Override::load($id);
     return $app->json($override);
@@ -30,7 +30,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function getAll(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides']);
+    $this->checkPermissions(['access_rules']);
     $overrides = [];
     foreach (Override::loadAll() as $override) {
       $overrides[] = $override->get();
@@ -42,7 +42,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function delete(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides', 'manage_overrides']);
+    $this->checkPermissions(['access_rules', 'manage_overrides']);
     $id = $request->get('id');
     $override = Override::load($id);
     if (!$override) {
@@ -55,7 +55,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function deleteAll(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides', 'manage_overrides']);
+    $this->checkPermissions(['access_rules', 'manage_overrides']);
     return $app->json(Override::deleteAll());
   }
 
@@ -63,7 +63,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function modify(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides', 'manage_overrides']);
+    $this->checkPermissions(['access_rules', 'manage_overrides']);
     $id = $request->get('id');
     $override = Override::load($id);
 
@@ -84,7 +84,7 @@ class OverridesController extends Controller {
    * {@inheritdoc}
    */
   public function create(Request $request, Application $app) {
-    $this->checkPermissions(['access_overrides', 'manage_overrides']);
+    $this->checkPermissions(['access_rules', 'manage_overrides']);
     $required = ['start', 'end', 'temp'];
     foreach ($required as $field) {
       if (!$request->request->has($field)) {
