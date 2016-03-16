@@ -45,7 +45,7 @@ class SensorController extends Controller {
 
     $temps = [];
     for ($t = $start; $t <= $end; $t += 60) {
-      $temps[$t] = rand(2902, 2952);
+      $temps[$t] = rand(2902, 2952) / 10;
     }
     return $app->json($temps);
   }
