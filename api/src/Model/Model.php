@@ -43,10 +43,13 @@ abstract class Model {
     $vars = array_keys(get_class_vars(get_called_class()));
     $out = [];
     foreach ($vars as $var) {
-      if ($var == 'app' || $var == 'db') {
-        continue;
+      $getter = 'get';
+      foreach (explode('_', $var) as $word) {
+        $getter .= ucfirst(strtolower($word));
       }
-      $out[$var] = $this->$var;
+      if (method_exists($this, $getter)) {
+        $out[$var] = $this->$getter();
+      }
     }
     return $out;
   }
