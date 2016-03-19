@@ -58,7 +58,7 @@ abstract class Controller {
       'post' => [
         $route => 'create',
       ],
-      'patch' => [
+      'put' => [
         $route . '/{id}' => 'modify',
       ],
       'delete' => [
