@@ -180,14 +180,14 @@ class User extends Model {
    * @return string
    */
   public function getLastLogin() {
-    return $this->last_login;
+    return strtotime($this->last_login);
   }
 
   /**
    * @return string
    */
   public function getCreated() {
-    return $this->created;
+    return strtotime($this->created);
   }
 
   /**

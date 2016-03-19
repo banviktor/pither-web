@@ -88,14 +88,14 @@ class Override extends Model {
    * @return string
    */
   public function getStart() {
-    return $this->start;
+    return strtotime($this->start);
   }
 
   /**
    * @return string
    */
   public function getEnd() {
-    return $this->end;
+    return strtotime($this->end);
   }
 
   /**
