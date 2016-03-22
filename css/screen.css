@@ -8,6 +8,11 @@ body {
     padding: 10px;
 }
 
+.form-user {
+    margin: 0 auto;
+    max-width: 500px;
+}
+
 .ng-dirty.ng-invalid {
     border-color: #a94442;
 }

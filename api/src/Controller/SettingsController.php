@@ -46,7 +46,7 @@ class SettingsController extends Controller {
   /**
    * {@inheritdoc}
    */
-  public function modify(Request $request, Application $app) {
+  public function update(Request $request, Application $app) {
     $this->checkPermissions(['access_settings', 'manage_settings']);
     $id = $request->get('id');
     $value = $request->getContent();

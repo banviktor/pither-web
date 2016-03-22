@@ -120,13 +120,13 @@ class User extends Model {
       // Fetch roles.
       $roles = static::$db->fetchAll("SELECT `r`.`id`, `r`.`title` FROM `roles` `r`, `users_roles` `ur` WHERE `ur`.`role_id` = `r`.`id` AND `ur`.`user_id` = ?", [$id]);
       foreach ($roles as $role) {
-        $this->roles[$role['id']] = $role['title'];
+        $this->roles[$role['id']] = TRUE;
       }
 
       // Fetch permissions.
       $perms = static::$db->fetchAll("SELECT `p`.`id`, `p`.`title` FROM `users_roles` `ur`, `roles_permissions` `rp`, `permissions` `p` WHERE `ur`.`role_id` = `rp`.`role_id` AND `rp`.`perm_id` = `p`.`id` AND `ur`.`user_id` = ?", [$id]);
       foreach ($perms as $perm) {
-        $this->perms[$perm['id']] = $perm['title'];
+        $this->perms[$perm['id']] = TRUE;
       }
     }
     else {
@@ -160,7 +160,7 @@ class User extends Model {
    * @return string
    */
   public function getPass() {
-    return $this->pass;
+    return '';
   }
 
   /**

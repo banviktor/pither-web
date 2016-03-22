@@ -65,8 +65,9 @@ class UsersController extends Controller {
   /**
    * {@inheritdoc}
    */
-  public function modify(Request $request, Application $app) {
-    $id = $request->get('id');
+  public function update(Request $request, Application $app) {
+    $input = $this->getInput($request, ['id'], ['email', 'name', 'pass', 'unit', 'roles']);
+    $id = $input->id;
     $user = User::load($id);
 
     $manage_users = $this->checkPermissions(['manage_users'], TRUE);
@@ -75,30 +76,33 @@ class UsersController extends Controller {
       return $app->json(FALSE);
     }
 
-    if ($email = $request->get('email')) {
+    if ($email = $input->email) {
       $user->setEmail($email);
     }
-    if ($name = $request->get('name')) {
+    if ($name = $input->name) {
       $user->setName($name);
     }
-    if ($pass = $request->get('pass')) {
+    if ($pass = $input->pass) {
       $user->setPass($pass);
     }
-    if ($unit = $request->get('unit')) {
+    if ($unit = $input->unit) {
       $user->setUnit($unit);
     }
-    if ($role_id = $request->get('grant_role')) {
-      $user->grantRole($role_id);
-    }
-    if ($role_id = $request->get('revoke_role')) {
-      $user->revokeRole($role_id);
-    }
-    if ($roles = $request->get('roles')) {
-      $roles = explode(',', $roles);
-      $set_roles = [];
-      foreach ($roles as $role_id) {
-        $set_roles[$role_id] = TRUE;
+    if ($roles = $input->roles) {
+      if (is_object($roles)) {
+        $set_roles = [];
+        foreach (get_object_vars($roles) as $var => $val) {
+          $set_roles[$var] = $val == TRUE;
+        }
       }
+      else {
+        $roles = explode(',', $roles);
+        $set_roles = [];
+        foreach ($roles as $role_id) {
+          $set_roles[$role_id] = TRUE;
+        }
+      }
+      $set_roles = array_filter($set_roles);
       $user->setRoles($set_roles);
     }
 
@@ -110,36 +114,43 @@ class UsersController extends Controller {
    */
   public function create(Request $request, Application $app) {
     $this->checkPermissions(['create_users']);
-    $required = ['name', 'email', 'pass'];
-    foreach ($required as $field) {
-      if (!$request->request->has($field)) {
-        return $app->json(FALSE);
-      }
+    $input = $this->getInput($request, ['name', 'email', 'pass'], ['unit', 'roles']);
+    if (!$input) {
+      return $app->json(FALSE);
     }
 
     $user = new User(-1, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
-    if ($email = $request->get('email')) {
+    if ($email = $input->email) {
       $user->setEmail($email);
     }
-    if ($name = $request->get('name')) {
+    if ($name = $input->name) {
       $user->setName($name);
     }
-    if ($pass = $request->get('pass')) {
+    if ($pass = $input->pass) {
       $user->setPass($pass);
     }
-    if ($unit = $request->get('unit')) {
+    if ($unit = $input->unit) {
       $user->setUnit($unit);
     }
-    if ($roles = $request->get('roles')) {
-      $roles = explode(',', $roles);
-      $set_roles = [];
-      foreach ($roles as $role_id) {
-        $set_roles[$role_id] = TRUE;
+    if ($roles = $input->roles) {
+      if (is_object($roles)) {
+        $set_roles = [];
+        foreach (get_object_vars($roles) as $var => $val) {
+          $set_roles[$var] = $val == TRUE;
+        }
       }
+      else {
+        $roles = explode(',', $roles);
+        $set_roles = [];
+        foreach ($roles as $role_id) {
+          $set_roles[$role_id] = TRUE;
+        }
+      }
+      $set_roles = array_filter($set_roles);
       $user->setRoles($set_roles);
     }
 
-    return $app->json($user->save());
+    return $app->json($user->save() ? $user->getId() : FALSE);
   }
 
   /**

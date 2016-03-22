@@ -62,7 +62,7 @@ class OverridesController extends Controller {
   /**
    * {@inheritdoc}
    */
-  public function modify(Request $request, Application $app) {
+  public function update(Request $request, Application $app) {
     $this->checkPermissions(['access_rules', 'manage_overrides']);
     $id = $request->get('id');
     $override = Override::load($id);

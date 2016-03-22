@@ -20,7 +20,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li ng-show="currentUser.id == 0"><a href="#/login">Log in</a></li>
-        <li ng-show="currentUser.id != 0"><a ng-href="#/users/{{currentUser.id}}">Profile</a></li>
+        <li ng-show="currentUser.id != 0"><a ng-href="#/users/view/{{currentUser.id}}">Profile</a></li>
         <li ng-show="currentUser.id != 0"><a href="#/logout" ng-click="logout()">Log out</a></li>
       </ul>
     </div><!--/.nav-collapse -->

@@ -59,7 +59,7 @@ abstract class Controller {
         $route => 'create',
       ],
       'put' => [
-        $route . '/{id}' => 'modify',
+        $route . '/{id}' => 'update',
       ],
       'delete' => [
         $route => 'deleteAll',
@@ -164,7 +164,7 @@ abstract class Controller {
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
-  public function modify(Request $request, Application $app) {
+  public function update(Request $request, Application $app) {
     throw new AccessDeniedHttpException();
   }
 

@@ -62,7 +62,7 @@ class RulesController extends Controller {
   /**
    * {@inheritdoc}
    */
-  public function modify(Request $request, Application $app) {
+  public function update(Request $request, Application $app) {
     $this->checkPermissions(['access_rules', 'manage_rules']);
     $id = $request->get('id');
     $rule = Rule::load($id);
