@@ -147,10 +147,10 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function login(Request $request, Application $app) {
-    $name_email = $request->get('user');
+    $email = $request->get('email');
     $pass = $request->get('pass');
 
-    $user = User::loadByCredentials($name_email, $pass);
+    $user = User::loadByCredentials($email, $pass);
     if ($user) {
       $_SESSION['uid'] = $user->getId();
       $user->setLastLogin()->save();

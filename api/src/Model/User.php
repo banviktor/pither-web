@@ -52,15 +52,9 @@ class User extends Model {
    *
    * @return null|\PiTher\Model\User
    */
-  public static function loadByCredentials($user, $pass) {
-    if (filter_var($user, FILTER_VALIDATE_EMAIL)) {
-      $auth_field = "email";
-    }
-    else {
-      $auth_field = "name";
-    }
-    $sql = "SELECT * FROM `users` WHERE `" . $auth_field . "` = ? AND `pass` = SHA1(?)";
-    $row = static::$db->fetchAssoc($sql, [$user, $pass]);
+  public static function loadByCredentials($email, $pass) {
+    $sql = "SELECT * FROM `users` WHERE `email` = ? AND `pass` = SHA1(?)";
+    $row = static::$db->fetchAssoc($sql, [$email, $pass]);
     if (empty($row)) {
       return NULL;
     }
