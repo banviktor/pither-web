@@ -32,8 +32,10 @@ class UsersController extends Controller {
    * {@inheritdoc}
    */
   public function get(Request $request, Application $app) {
-    $this->checkPermissions(['manage_users']);
     $id = $request->get('id');
+    if (User::currentUser()->getId() != $id) {
+      $this->checkPermissions(['manage_users']);
+    }
     $user = User::load($id);
     return $app->json($user->get());
   }
