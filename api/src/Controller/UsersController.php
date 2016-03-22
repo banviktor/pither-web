@@ -147,10 +147,12 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function login(Request $request, Application $app) {
-    $email = $request->get('email');
-    $pass = $request->get('pass');
+    $input = $this->getInput($request, ['email', 'pass']);
+    if (!$input) {
+      return $app->json(FALSE);
+    }
 
-    $user = User::loadByCredentials($email, $pass);
+    $user = User::loadByCredentials($input->email, $input->pass);
     if ($user) {
       $_SESSION['uid'] = $user->getId();
       $user->setLastLogin()->save();

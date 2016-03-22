@@ -90,35 +90,41 @@ abstract class Controller {
   }
 
   /**
-   * Checks whether the proper input parameters have been passed in the request.
+   * Returns an object containing the required input fields as attributes.
    *
-   * @param string $method
-   *   The request method.
-   * @param array $keys
-   *   The keys to look for.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request object.
+   * @param string[] $required
+   *   The required input fields to look for.
+   * @param string[] $optional
+   *   The optional input fields to look for.
    *
-   * @return bool
-   *   TRUE if all of the keys exist, FALSE otherwise.
+   * @return \stdClass|FALSE
+   *   The object containing the input fields or FALSE if not all required is set.
    */
-  protected function checkInput($method, array $keys) {
-    switch (strtoupper($method)) {
-      case 'GET':
-        $in = $_GET;
-        break;
+  protected function getInput(Request $request, array $required, array $optional = []) {
+    $input = new \stdClass();
+    $fields = array_merge($required, $optional);
 
-      case 'POST':
-        $in = $_POST;
-        break;
-
-      default:
-        return FALSE;
-    }
-    foreach ($keys as $key) {
-      if (!isset($in[$key])) {
-        return FALSE;
+    if ($request->getMethod() != 'GET' && $request->getContentType() == 'json') {
+      $json = json_decode($request->getContent());
+      foreach ($fields as $key) {
+        if (in_array($key, $required) && !isset($json->$key)) {
+          return FALSE;
+        }
+        $input->$key = $json->$key;
       }
     }
-    return TRUE;
+    else {
+      foreach ($fields as $key) {
+        if (in_array($key, $required) && !$request->request->has($key) && !$request->attributes->has($key) && !$request->query->has($key)) {
+          return FALSE;
+        }
+        $input->$key = $request->get($key, NULL);
+      }
+    }
+
+    return $input;
   }
 
   /**
