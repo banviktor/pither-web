@@ -1,0 +1,17 @@
+<form class="form-login" ng-submit="login()" novalidate>
+    <h2>Log in</h2>
+    <fieldset class="form-group">
+        <label for="email" class="sr-only">E-mail</label>
+        <input id="email" ng-model="formData.email" class="form-control" type="email" placeholder="E-mail" autofocus required />
+    </fieldset>
+    <fieldset class="form-group">
+        <label for="pass" class="sr-only">Password</label>
+        <input id="pass" ng-model="formData.pass" class="form-control" type="password" placeholder="Password" required />
+    </fieldset>
+    <div class="form-group">
+        <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+    <p class="text-danger" ng-show="errorMsg.length > 0">
+        {{ errorMsg }}
+    </p>
+</form>

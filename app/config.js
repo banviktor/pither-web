@@ -3,10 +3,9 @@ angular.module('PiTher').config(['$routeProvider', function ($routeProvider) {
   .when('/', {
 
   })
-  .when('/hello/:who', {
-    templateUrl: 'app/hello/helloView.html',
-    controller: 'HelloController',
-    controllerAs: 'helloCtrl'
+  .when('/login', {
+    templateUrl: 'app/login/loginView.html',
+    controller: 'LoginController'
   })
   .otherwise({
     redirectTo: '/'
