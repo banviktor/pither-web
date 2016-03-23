@@ -96,20 +96,21 @@
     <fieldset class="form-group">
       <label class="col-sm-3 control-label">Name</label>
       <div class="col-sm-9">
-        <input class="form-control" id="name" type="text" placeholder="Name" ng-model="userCtrl.user.name" />
+        <input class="form-control" id="name" type="text" placeholder="Name" ng-model="userCtrl.user.name"/>
       </div>
     </fieldset>
     <fieldset class="form-group">
       <label class="col-sm-3 control-label">E-mail</label>
       <div class="col-sm-9">
-        <input class="form-control" id="email" type="email" placeholder="E-mail" ng-model="userCtrl.user.email" />
+        <input class="form-control" id="email" type="email" placeholder="E-mail" ng-model="userCtrl.user.email"/>
       </div>
     </fieldset>
     <fieldset class="form-group">
       <label class="col-sm-3 control-label">Password</label>
       <div class="col-sm-9">
-        <input class="form-control" id="pass" type="password" placeholder="Password" ng-model="userCtrl.user.pass" />
-        <input class="form-control" type="password" placeholder="Confirm password" ng-model="userCtrl.user.pass_confirm" compare-to="userCtrl.user.pass" />
+        <input class="form-control" id="pass" type="password" placeholder="Password" ng-model="userCtrl.user.pass"/>
+        <input class="form-control" type="password" placeholder="Confirm password" ng-model="userCtrl.user.pass_confirm"
+               compare-to="userCtrl.user.pass"/>
       </div>
     </fieldset>
     <fieldset class="form-group">
@@ -158,7 +159,7 @@
         </div>
       </div>
     </fieldset>
-    <div class="form-group" ng-hide="userCtrl.action == 'view'">
+    <div class="form-group">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default">Save</button>
       </div>

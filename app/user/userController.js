@@ -1,4 +1,4 @@
-angular.module('PiTher').controller('UserController', ['$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http) {
+angular.module('PiTher').controller('UserController', ['$scope', '$routeParams', '$http', '$location', function ($scope, $routeParams, $http) {
   var controller = this;
 
   this.user = {
@@ -12,22 +12,23 @@ angular.module('PiTher').controller('UserController', ['$scope', '$routeParams',
   this.action = 'view';
 
   $http.get('api/users/' + $routeParams.id).then(
-      function successCallback(response) {
-        $scope.clearNotifications();
-        if (response.data.success) {
-          controller.user = response.data.data;
-        }
-        else {
-          $scope.notifications.danger = response.data.errors;
-        }
-      },
-      function errorCallback(response) {
-        $scope.clearNotifications();
+    function successCallback(response) {
+      $scope.clearNotifications();
+      if (response.data.success) {
+        controller.user = response.data.data;
+      }
+      else {
         $scope.notifications.danger = response.data.errors;
       }
+    },
+    function errorCallback(response) {
+      $scope.clearNotifications();
+      $scope.notifications.danger = response.data.errors;
+    }
   );
-  this.editUser = function() {
+  this.editUser = function () {
     var user = this.user;
+
     if (user.pass == '') {
       delete user.pass;
     }
@@ -52,7 +53,7 @@ angular.module('PiTher').controller('UserController', ['$scope', '$routeParams',
       }
     );
   };
-  this.canEditRoles = function() {
+  this.canEditRoles = function () {
     return this.action != 'view' && $scope.hasPermission('manage_users');
   };
 }]);

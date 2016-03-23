@@ -13,12 +13,13 @@ body {
 .form-login {
     margin: 0 auto;
     max-width: 300px;
-    padding: 10px;
+    padding: 12px;
 }
 
 .form-user {
     margin: 0 auto;
     max-width: 500px;
+    padding: 12px;
 }
 
 .form-user form {
