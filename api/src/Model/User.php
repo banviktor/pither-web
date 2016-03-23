@@ -277,8 +277,11 @@ class User extends Model {
    * @return bool
    */
   public function setRoles(array $roles) {
+    $roles_old = $this->roles;
+    $this->roles = [];
     foreach ($roles as $role_id => $set) {
       if ($set && !in_array($role_id, ['owner', 'user', 'guest'])) {
+        $this->roles = $roles_old;
         return FALSE;
       }
       elseif ($set) {
