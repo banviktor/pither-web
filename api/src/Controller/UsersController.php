@@ -7,9 +7,9 @@
 namespace PiTher\Controller;
 
 use PiTher\Model\User;
+use PiTher\ResponseData;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class UsersController
@@ -32,125 +32,186 @@ class UsersController extends Controller {
    * {@inheritdoc}
    */
   public function get(Request $request, Application $app) {
+    $rd = new ResponseData();
+
     $id = $request->get('id');
-    if (User::currentUser()->getId() != $id) {
-      $this->checkPermissions(['manage_users']);
+    if (User::currentUser()->getId() != $id && !$this->checkPermissions(['manage_users'])) {
+      $rd->addPermissionError('manage users');
     }
-    $user = User::load($id);
-    return $app->json($user->get());
+    else {
+      $user = User::load($id);
+      if ($user !== NULL) {
+        $rd->setData($user->get());
+      }
+      else {
+        $rd->addError('User not found.');
+      }
+    }
+
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getAll(Request $request, Application $app) {
-    $this->checkPermissions(['manage_users']);
-    $users = [];
-    foreach (User::loadAll() as $user) {
-      $users[] = $user->get();
+    $rd = new ResponseData();
+
+    if (!$this->checkPermissions(['manage_users'])) {
+      $rd->addPermissionError('manage users');
     }
-    return $app->json($users);
+    else {
+      $users = [];
+      foreach (User::loadAll() as $user) {
+        $users[] = $user->get();
+      }
+      $rd->setData($users);
+    }
+
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
   public function delete(Request $request, Application $app) {
-    $this->checkPermissions(['manage_users']);
-    $id = $request->get('id');
-    $user = User::load($id);
-    return $app->json($user->delete());
+    $rd = new ResponseData();
+
+    if (!$this->checkPermissions(['manage_users'])) {
+      $rd->addPermissionError('manage users');
+    }
+    else {
+      $id = $request->get('id');
+      $user = User::load($id);
+      if ($user !== NULL) {
+        if (!$user->delete()) {
+          $rd->addError('Failed to delete user.');
+        }
+      }
+      else {
+        $rd->addError('User not found.');
+      }
+    }
+
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
   public function update(Request $request, Application $app) {
+    $rd = new ResponseData();
+
     $input = $this->getInput($request, ['id'], ['email', 'name', 'pass', 'unit', 'roles']);
-    $id = $input->id;
-    $user = User::load($id);
+    $user = User::load($input->id);
 
-    $manage_users = $this->checkPermissions(['manage_users'], TRUE);
-    $self = $id != 0 && User::currentUser()->getId() == $user->getId();
-    if (!$manage_users && !$self) {
-      return $app->json(FALSE);
-    }
-
-    if ($email = $input->email) {
-      $user->setEmail($email);
-    }
-    if ($name = $input->name) {
-      $user->setName($name);
-    }
-    if ($pass = $input->pass) {
-      $user->setPass($pass);
-    }
-    if ($unit = $input->unit) {
-      $user->setUnit($unit);
-    }
-    if ($roles = $input->roles) {
-      if (is_object($roles)) {
-        $set_roles = [];
-        foreach (get_object_vars($roles) as $var => $val) {
-          $set_roles[$var] = $val == TRUE;
-        }
+    if ($user !== NULL) {
+      $manage_users = $this->checkPermissions(['manage_users']);
+      $self = User::currentUser()->getId() == $user->getId();
+      if (!$manage_users && !$self) {
+        $rd->addPermissionError('manage users');
       }
       else {
-        $roles = explode(',', $roles);
-        $set_roles = [];
-        foreach ($roles as $role_id) {
-          $set_roles[$role_id] = TRUE;
+        if (isset($input->email) && !$user->setEmail($input->email)) {
+          $rd->addError('Invalid e-mail address.');
+        }
+        if (isset($input->name) && !$user->setName($input->name)) {
+          $rd->addError('Invalid name.');
+        }
+        if (isset($input->pass) && !$user->setPass($input->pass)) {
+          $rd->addError('Invalid password');
+        }
+        if (isset($input->unit) && !$user->setUnit($input->unit)) {
+          $rd->addError('Invalid temperature unit.');
+        }
+        if ($manage_users && isset($input->roles)) {
+          if (is_object($input->roles)) {
+            $set_roles = [];
+            foreach (get_object_vars($input->roles) as $var => $val) {
+              $set_roles[$var] = $val == TRUE;
+            }
+          }
+          else {
+            $roles = explode(',', $input->roles);
+            $set_roles = [];
+            foreach ($roles as $role_id) {
+              $set_roles[$role_id] = TRUE;
+            }
+          }
+          if (!$user->setRoles(array_filter($set_roles))) {
+            $rd->addError('Invalid roles.');
+          }
+        }
+        if (!$rd->hasErrors() && !$user->save()) {
+          $rd->addError('Failed to update user.');
         }
       }
-      $set_roles = array_filter($set_roles);
-      $user->setRoles($set_roles);
+    }
+    else {
+      $rd->addError('User not found.');
     }
 
-    return $app->json($user->save());
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
   public function create(Request $request, Application $app) {
-    $this->checkPermissions(['create_users']);
-    $input = $this->getInput($request, ['name', 'email', 'pass'], ['unit', 'roles']);
-    if (!$input) {
-      return $app->json(FALSE);
-    }
+    $rd = new ResponseData();
 
-    $user = new User(-1, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
-    if ($email = $input->email) {
-      $user->setEmail($email);
+    if (!$this->checkPermissions(['create_users'])) {
+      $rd->addPermissionError('create users');
     }
-    if ($name = $input->name) {
-      $user->setName($name);
-    }
-    if ($pass = $input->pass) {
-      $user->setPass($pass);
-    }
-    if ($unit = $input->unit) {
-      $user->setUnit($unit);
-    }
-    if ($roles = $input->roles) {
-      if (is_object($roles)) {
-        $set_roles = [];
-        foreach (get_object_vars($roles) as $var => $val) {
-          $set_roles[$var] = $val == TRUE;
-        }
+    else {
+      $input = $this->getInput($request, ['name', 'email', 'pass'], ['unit', 'roles']);
+      if (!$input) {
+        $rd->addError('Required fields were left empty.');
       }
       else {
-        $roles = explode(',', $roles);
-        $set_roles = [];
-        foreach ($roles as $role_id) {
-          $set_roles[$role_id] = TRUE;
+        $user = new User(-1, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
+        if (!$user->setEmail($input->email)) {
+          $rd->addError('Invalid e-mail address.');
+        }
+        if (!$user->setName($input->name)) {
+          $rd->addError('Invalid name.');
+        }
+        if (!$user->setPass($input->pass)) {
+          $rd->addError('Invalid password');
+        }
+        if (isset($input->unit) && !$user->setUnit($input->unit)) {
+          $rd->addError('Invalid temperature unit.');
+        }
+        if (isset($input->roles)) {
+          if (is_object($input->roles)) {
+            $set_roles = [];
+            foreach (get_object_vars($input->roles) as $var => $val) {
+              $set_roles[$var] = $val == TRUE;
+            }
+          }
+          else {
+            $roles = explode(',', $input->roles);
+            $set_roles = [];
+            foreach ($roles as $role_id) {
+              $set_roles[$role_id] = TRUE;
+            }
+          }
+          if (!$user->setRoles(array_filter($set_roles))) {
+            $rd->addError('Invalid roles.');
+          }
+        }
+        if (!$rd->hasErrors()) {
+          if ($user->save()) {
+            $rd->setData($user->getId());
+          }
+          else {
+            $rd->addError('Failed to create user.');
+          }
         }
       }
-      $set_roles = array_filter($set_roles);
-      $user->setRoles($set_roles);
     }
 
-    return $app->json($user->save() ? $user->getId() : FALSE);
+    return $rd->toResponse();
   }
 
   /**
@@ -160,18 +221,26 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function login(Request $request, Application $app) {
+    $rd = new ResponseData();
+
     $input = $this->getInput($request, ['email', 'pass']);
     if (!$input) {
-      return $app->json(FALSE);
+      $rd->addError('Invalid request.');
+    }
+    else {
+      $user = User::loadByCredentials($input->email, $input->pass);
+      if (!$user) {
+        $rd->addError('Wrong e-mail or password.');
+      }
+      else {
+        $_SESSION['uid'] = $user->getId();
+        $user->setLastLogin();
+        $user->save();
+        $rd->setData($user->get());
+      }
     }
 
-    $user = User::loadByCredentials($input->email, $input->pass);
-    if ($user) {
-      $_SESSION['uid'] = $user->getId();
-      $user->setLastLogin()->save();
-      return $app->json(TRUE);
-    }
-    return $app->json(FALSE);
+    return $rd->toResponse();
   }
 
   /**
@@ -181,8 +250,10 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function logout(Request $request, Application $app) {
+    $rd = new ResponseData();
     session_unset();
-    return $app->json(TRUE);
+
+    return $rd->toResponse();
   }
 
   /**
@@ -192,7 +263,10 @@ class UsersController extends Controller {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function self(Request $request, Application $app) {
-    return $app->json(User::currentUser()->get());
+    $rd = new ResponseData();
+    $rd->setData(User::currentUser()->get());
+
+    return $rd->toResponse();
   }
 
 }

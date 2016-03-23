@@ -1,4 +1,4 @@
-angular.module('PiTher').controller('UserController', ['$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http, $location) {
+angular.module('PiTher').controller('UserController', ['$scope', '$routeParams', '$http', '$location', function($scope, $routeParams, $http) {
   var controller = this;
 
   this.user = {
@@ -9,54 +9,48 @@ angular.module('PiTher').controller('UserController', ['$scope', '$routeParams',
     unit: 'c'
   };
   this.error = '';
-  this.action = $routeParams.action;
-  if ((this.action != 'add' && !$routeParams.hasOwnProperty('id')) || (['add', 'view', 'edit'].indexOf(this.action) < 0)) {
-    $location.path('/');
-    return;
-  }
-  if (this.action != 'add') {
-    $http.get('api/users/' + $routeParams.id).then(
-        function successCallback(response) {
-          controller.user = response.data;
-        },
-        function errorCallback(response) {
-          controller.error = response.statusText;
-        }
-    );
-  }
+  this.action = 'view';
 
-  this.addUser = function(user) {
-    delete user.id;
-    $http.post('api/users', user).then(
+  $http.get('api/users/' + $routeParams.id).then(
       function successCallback(response) {
-        if (response.data != false && response.data > 0) {
-          $location.path('/users/view/' + response.data);
+        $scope.clearNotifications();
+        if (response.data.success) {
+          controller.user = response.data.data;
         }
+        else {
+          $scope.notifications.danger = response.data.errors;
+        }
+      },
+      function errorCallback(response) {
+        $scope.clearNotifications();
+        $scope.notifications.danger = response.data.errors;
       }
-    );
-  };
-  this.editUser = function(user) {
+  );
+  this.editUser = function() {
+    var user = this.user;
     if (user.pass == '') {
       delete user.pass;
     }
+    else if (user.pass != user.pass_confirm) {
+      $scope.clearNotifications();
+      $scope.notifications.danger = ['The two passwords are not the same.'];
+      this.user.pass = '';
+      this.user.pass_confirm = '';
+      return;
+    }
     $http.put('api/users/' + user.id, user).then(
       function successCallback(response) {
-        if (response.data == true) {
-          $location.path('/users/view/' + user.id);
+        if (response.data.success == true) {
+          controller.action = 'view';
+          $scope.clearNotifications();
+          $scope.notifications.success = ['The modifications were successful.'];
+          delete controller.user.pass;
         }
         else {
-          alert('fak');
+          $scope.notifications.danger = response.data.errors;
         }
       }
     );
-  };
-  this.submit = function() {
-    if (this.action == 'add') {
-      this.addUser(this.user);
-    }
-    else if (this.action == 'edit') {
-      this.editUser(this.user);
-    }
   };
   this.canEditRoles = function() {
     return this.action != 'view' && $scope.hasPermission('manage_users');

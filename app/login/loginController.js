@@ -6,13 +6,13 @@ angular.module('PiTher').controller('LoginController', ['$scope', '$http', '$loc
   this.login = function () {
     $http.post('api/login', this.formData).then(
       function successCallback(response) {
-        if (response.data == true) {
+        if (response.data.success == true) {
           $location.path('/');
           $scope.refreshCurrentUser();
         }
         else {
           controller.formData = {};
-          controller.formError = "Invalid credentials. Try again!";
+          controller.formError = response.data.errors[0];
         }
       });
   };

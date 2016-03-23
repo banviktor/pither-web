@@ -5,6 +5,7 @@
  */
 
 namespace PiTher\Model;
+use Doctrine\DBAL\DBALException;
 
 /**
  * Class User
@@ -201,94 +202,97 @@ class User extends Model {
   /**
    * @param string $name
    *
-   * @return $this
+   * @return bool
    */
   public function setName($name) {
-    $this->name = $name;
-    return $this;
+    if (!empty($name)) {
+      $this->name = $name;
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
    * @param string $email
    *
-   * @return $this
+   * @return bool
    */
   public function setEmail($email) {
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
       $this->email = $email;
+      return TRUE;
     }
-    return $this;
+    return FALSE;
   }
 
   /**
    * @param string $pass
    *
-   * @return $this
+   * @return bool
    */
   public function setPass($pass) {
-    $this->pass = sha1($pass);
-    return $this;
+    if (!empty($pass)){
+      $this->pass = sha1($pass);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
    * @param string $unit
    *
-   * @return $this
+   * @return bool
    */
   public function setUnit($unit) {
     if (in_array($unit, ['c', 'f', 'k'])) {
       $this->unit = $unit;
+      return TRUE;
     }
-
-    return $this;
+    return FALSE;
   }
 
   /**
    * @param int $last_login
    *
-   * @return $this
+   * @return bool
    */
   public function setLastLogin($last_login = NULL) {
     if (!$last_login) {
       $last_login = time();
     }
-    if (is_numeric($last_login)) {
-      $last_login = date('Y-m-d H:i:s', $last_login);
+    elseif (!is_numeric($last_login)) {
+      $last_login = strtotime($last_login);
     }
-    $this->last_login = $last_login;
-    return $this;
+
+    if ($last_login >= 0) {
+      $this->last_login = date('Y-m-d H:i:s', $last_login);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
    * @param array $roles
    *
-   * @return $this
+   * @return bool
    */
-  public function setRoles($roles) {
-    $this->roles = $roles;
-    return $this;
+  public function setRoles(array $roles) {
+    foreach ($roles as $role_id => $set) {
+      if ($set && !in_array($role_id, ['owner', 'user', 'guest'])) {
+        return FALSE;
+      }
+      elseif ($set) {
+        $this->roles[$role_id] = TRUE;
+      }
+    }
+    return TRUE;
   }
 
   /**
-   * @param string $role_id
+   * @param string[] $permissions
    *
-   * @return $this
+   * @return bool
    */
-  public function revokeRole($role_id) {
-    unset($this->roles[$role_id]);
-    return $this;
-  }
-
-  /**
-   * @param string $role_id
-   *
-   * @return $this
-   */
-  public function grantRole($role_id) {
-    $this->roles[$role_id] = TRUE;
-    return $this;
-  }
-
   public function hasPermissions(array $permissions) {
     return count(array_intersect(array_keys($this->getPerms()), $permissions)) >= count($permissions);
   }
@@ -322,8 +326,13 @@ class User extends Model {
         }
         return TRUE;
       });
-      static::$db->insert('users', $data);
-      $this->id = static::$db->lastInsertId();
+      try {
+        static::$db->insert('users', $data);
+        $this->id = static::$db->lastInsertId();
+      }
+      catch (DBALException $e) {
+        return FALSE;
+      }
     }
     else {
       static::$db->update('users', $data, ['id' => $this->id]);

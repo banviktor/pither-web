@@ -1,0 +1,20 @@
+<div class="alert alert-success" ng-show="notifications.success.length > 0">
+  <ul ng-repeat="msg in notifications.success">
+    <li>{{ msg }}</li>
+  </ul>
+</div>
+<div class="alert alert-info" ng-show="notifications.info.length > 0">
+  <ul ng-repeat="msg in notifications.info">
+    <li>{{ msg }}</li>
+  </ul>
+</div>
+<div class="alert alert-warning" ng-show="notifications.warning.length > 0">
+  <ul ng-repeat="msg in notifications.warning">
+    <li>{{ msg }}</li>
+  </ul>
+</div>
+<div class="alert alert-danger" ng-show="notifications.danger.length > 0">
+  <ul ng-repeat="msg in notifications.danger">
+    <li>{{ msg }}</li>
+  </ul>
+</div>

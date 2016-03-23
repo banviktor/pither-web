@@ -1,47 +1,30 @@
-<div class="alert alert-danger" ng-show="userCtrl.error.length > 0">
-  {{ userCtrl.error }}
-</div>
-<div class="alert alert-danger" ng-show="userCtrl.action == 'add' && !hasPermission('create_users')">
-  You don't have the permission to create users.
-</div>
+<notification></notification>
 <div class="form-user">
-  <ul class="nav nav-tabs" ng-hide="userCtrl.action == 'add'">
+  <ul class="nav nav-tabs">
     <li role="presentation" ng-class="{active: userCtrl.action == 'view'}">
-      <a ng-href="#/users/view/{{userCtrl.user.id}}">View</a>
+      <a ng-click="userCtrl.action = 'view'" href="">View profile</a>
     </li>
     <li role="presentation" ng-class="{active: userCtrl.action == 'edit'}">
-      <a ng-href="#/users/edit/{{userCtrl.user.id}}">Edit</a>
+      <a ng-click="userCtrl.action = 'edit'" href="">Edit profile</a>
     </li>
   </ul>
-  <form class="form-horizontal form-user" ng-submit="userCtrl.submit()" ng-hide="userCtrl.action == 'add' && !hasPermission('create_users')" novalidate>
-    <fieldset class="form-group" ng-hide="userCtrl.action == 'add'">
-      <label class="col-sm-3 control-label">ID</label>
-      <div class="col-sm-9">
-        <p class="form-control-static">{{userCtrl.user.id}}</p>
-      </div>
-    </fieldset>
+
+  <!-- View profile form -->
+  <form class="form-horizontal" ng-show="userCtrl.action == 'view'" novalidate>
     <fieldset class="form-group">
       <label class="col-sm-3 control-label">Name</label>
       <div class="col-sm-9">
-        <p class="form-control-static" ng-show="userCtrl.action == 'view'">{{userCtrl.user.name}}</p>
-        <input class="form-control" id="name" type="text" placeholder="Name"
-               ng-hide="userCtrl.action == 'view'" ng-value="userCtrl.user.name" ng-model="userCtrl.user.name" />
+        <p class="form-control-static" ng-show="userCtrl.action == 'view'">
+          {{ userCtrl.user.name }}
+        </p>
       </div>
     </fieldset>
     <fieldset class="form-group">
       <label class="col-sm-3 control-label">E-mail</label>
       <div class="col-sm-9">
-        <p class="form-control-static" ng-show="userCtrl.action == 'view'">{{userCtrl.user.email}}</p>
-        <input class="form-control" id="email" type="email" placeholder="E-mail"
-               ng-hide="userCtrl.action == 'view'" ng-value="userCtrl.user.email" ng-model="userCtrl.user.email" />
-      </div>
-    </fieldset>
-    <fieldset class="form-group">
-      <label class="col-sm-3 control-label">Password</label>
-      <div class="col-sm-9">
-        <p class="form-control-static" ng-show="userCtrl.action == 'view'">******</p>
-        <input class="form-control" id="pass" type="password" placeholder="Password"
-               ng-hide="userCtrl.action == 'view'" ng-model="userCtrl.user.pass" />
+        <p class="form-control-static" ng-show="userCtrl.action == 'view'">
+          {{ userCtrl.user.email }}
+        </p>
       </div>
     </fieldset>
     <fieldset class="form-group">
@@ -49,22 +32,19 @@
       <div class="col-sm-9">
         <div class="radio">
           <label>
-            <input name="unit" id="unitC" type="radio" value="c"
-                   ng-disabled="userCtrl.action == 'view'" ng-model="userCtrl.user.unit">
+            <input name="unit" type="radio" value="c" ng-model="userCtrl.user.unit" disabled>
             Celsius
           </label>
         </div>
         <div class="radio">
           <label>
-            <input name="unit" id="unitF" type="radio" value="f"
-                   ng-disabled="userCtrl.action == 'view'" ng-model="userCtrl.user.unit">
+            <input name="unit" type="radio" value="f" ng-model="userCtrl.user.unit" disabled>
             Fahrenheit
           </label>
         </div>
         <div class="radio">
           <label>
-            <input name="unit" id="unitK" type="radio" value="k"
-                   ng-disabled="userCtrl.action == 'view'" ng-model="userCtrl.user.unit">
+            <input name="unit" type="radio" value="k" ng-model="userCtrl.user.unit" disabled>
             Kelvin
           </label>
         </div>
@@ -73,13 +53,17 @@
     <fieldset class="form-group" ng-hide="userCtrl.action == 'add'">
       <label class="col-sm-3 control-label">Last login</label>
       <div class="col-sm-9">
-        <p class="form-control-static">{{userCtrl.user.last_login * 1000 | date : 'yyyy.MM.dd HH:mm:ss' }}</p>
+        <p class="form-control-static">
+          {{ userCtrl.user.last_login * 1000 | date : 'yyyy.MM.dd HH:mm:ss' }}
+        </p>
       </div>
     </fieldset>
     <fieldset class="form-group" ng-hide="userCtrl.action == 'add'">
       <label class="col-sm-3 control-label">Created on</label>
       <div class="col-sm-9">
-        <p class="form-control-static">{{userCtrl.user.created * 1000 | date : 'yyyy.MM.dd HH:mm:ss' }}</p>
+        <p class="form-control-static">
+          {{ userCtrl.user.created * 1000 | date : 'yyyy.MM.dd HH:mm:ss' }}
+        </p>
       </div>
     </fieldset>
     <fieldset class="form-group">
@@ -87,19 +71,88 @@
       <div class="col-sm-9">
         <div class="checkbox" ng-class="{disabled: {{!userCtrl.canEditRoles()}}}">
           <label>
-            <input type="checkbox" value="owner" ng-disabled="!userCtrl.canEditRoles()" ng-model="userCtrl.user.roles.owner"/>
+            <input type="checkbox" value="owner" ng-model="userCtrl.user.roles.owner" disabled/>
             Owner
           </label>
         </div>
         <div class="checkbox" ng-class="{disabled: {{!userCtrl.canEditRoles()}}}">
           <label>
-            <input type="checkbox" value="user" ng-disabled="!userCtrl.canEditRoles()" ng-model="userCtrl.user.roles.user"/>
+            <input type="checkbox" value="user" ng-model="userCtrl.user.roles.user" disabled/>
             User
           </label>
         </div>
         <div class="checkbox" ng-class="{disabled: {{!userCtrl.canEditRoles()}}}">
           <label>
-            <input type="checkbox" value="guest" ng-disabled="!userCtrl.canEditRoles()" ng-model="userCtrl.user.roles.guest"/>
+            <input type="checkbox" value="guest" ng-model="userCtrl.user.roles.guest" disabled/>
+            Guest
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- Edit profile form -->
+  <form class="form-horizontal" ng-submit="userCtrl.editUser()" ng-show="userCtrl.action == 'edit'" novalidate>
+    <fieldset class="form-group">
+      <label class="col-sm-3 control-label">Name</label>
+      <div class="col-sm-9">
+        <input class="form-control" id="name" type="text" placeholder="Name" ng-model="userCtrl.user.name" />
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <label class="col-sm-3 control-label">E-mail</label>
+      <div class="col-sm-9">
+        <input class="form-control" id="email" type="email" placeholder="E-mail" ng-model="userCtrl.user.email" />
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <label class="col-sm-3 control-label">Password</label>
+      <div class="col-sm-9">
+        <input class="form-control" id="pass" type="password" placeholder="Password" ng-model="userCtrl.user.pass" />
+        <input class="form-control" type="password" placeholder="Confirm password" ng-model="userCtrl.user.pass_confirm" compare-to="userCtrl.user.pass" />
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <label class="col-sm-3 control-label">Temperature unit</label>
+      <div class="col-sm-9">
+        <div class="radio">
+          <label>
+            <input name="unit" id="unitC" type="radio" value="c" ng-model="userCtrl.user.unit">
+            Celsius
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input name="unit" id="unitF" type="radio" value="f" ng-model="userCtrl.user.unit">
+            Fahrenheit
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input name="unit" id="unitK" type="radio" value="k" ng-model="userCtrl.user.unit">
+            Kelvin
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="form-group" ng-show="userCtrl.canEditRoles()">
+      <label class="col-sm-3 control-label">Roles</label>
+      <div class="col-sm-9">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="owner" ng-model="userCtrl.user.roles.owner"/>
+            Owner
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="user" ng-model="userCtrl.user.roles.user"/>
+            User
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="guest" ng-model="userCtrl.user.roles.guest"/>
             Guest
           </label>
         </div>
@@ -107,7 +160,7 @@
     </fieldset>
     <div class="form-group" ng-hide="userCtrl.action == 'view'">
       <div class="col-sm-offset-3 col-sm-9">
-        <button type="submit" class="btn btn-default">{{userCtrl.action | ucfirst}}</button>
+        <button type="submit" class="btn btn-default">Save</button>
       </div>
     </div>
   </form>

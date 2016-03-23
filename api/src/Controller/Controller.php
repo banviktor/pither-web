@@ -73,20 +73,15 @@ abstract class Controller {
    *
    * @param array $permissions
    *   The list of permissions to look for.
-   * @param bool $soft_fail
-   *   If fails, return FALSE.
    *
    * @return bool
    *   Whether the user has the given permissions.
    */
-  protected function checkPermissions(array $permissions, $soft_fail = FALSE) {
+  protected function checkPermissions(array $permissions) {
     if (User::currentUser()->hasPermissions($permissions)) {
       return TRUE;
     }
-    if ($soft_fail) {
-      return FALSE;
-    }
-    throw new AccessDeniedHttpException();
+    return FALSE;
   }
 
   /**
@@ -109,18 +104,26 @@ abstract class Controller {
     if ($request->getMethod() != 'GET' && $request->getContentType() == 'json') {
       $json = json_decode($request->getContent());
       foreach ($fields as $key) {
-        if (in_array($key, $required) && !isset($json->$key)) {
-          return FALSE;
+        if (!isset($json->$key)) {
+          if (in_array($key, $required)) {
+            return FALSE;
+          }
         }
-        $input->$key = $json->$key;
+        else {
+          $input->$key = $json->$key;
+        }
       }
     }
     else {
       foreach ($fields as $key) {
-        if (in_array($key, $required) && !$request->request->has($key) && !$request->attributes->has($key) && !$request->query->has($key)) {
-          return FALSE;
+        if (!$request->request->has($key) && !$request->attributes->has($key) && !$request->query->has($key)) {
+          if (in_array($key, $required)) {
+            return FALSE;
+          }
         }
-        $input->$key = $request->get($key, NULL);
+        else {
+          $input->$key = $request->get($key);
+        }
       }
     }
 

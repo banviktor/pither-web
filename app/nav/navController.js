@@ -14,7 +14,7 @@ angular.module('PiTher').controller('NavController', ['$scope', '$http', functio
   $scope.refreshCurrentUser = function() {
     $http.get('api/self').then(
       function successCallback(response) {
-        $scope.currentUser = response.data;
+        $scope.currentUser = response.data.data;
       }
     );
   };

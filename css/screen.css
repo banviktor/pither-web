@@ -2,6 +2,14 @@ body {
     padding-top: 70px;
 }
 
+.ng-dirty.ng-invalid {
+    border-color: #a94442;
+}
+
+.ng-dirty.ng-valid {
+    border-color: #3c763d;
+}
+
 .form-login {
     margin: 0 auto;
     max-width: 300px;
@@ -13,10 +21,6 @@ body {
     max-width: 500px;
 }
 
-.ng-dirty.ng-invalid {
-    border-color: #a94442;
-}
-
-.ng-dirty.ng-valid {
-    border-color: #3c763d;
+.form-user form {
+    padding: 8px;
 }
