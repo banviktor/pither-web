@@ -96,6 +96,40 @@ class UsersController extends Controller {
     return $rd->toResponse();
   }
 
+  public function deleteAll(Request $request, Application $app) {
+    $rd = new ResponseData();
+
+    if (!$this->checkPermissions(['manage_users'])) {
+      $rd->addPermissionError('manage users');
+    }
+    else {
+      $input = $this->getInput($request, ['ids']);
+      if (!$input) {
+        $rd->addError('Invalid request.');
+      }
+      else {
+        $users = User::loadAll();
+        $owner_remains = FALSE;
+        foreach ($users as $user) {
+          if ($user->hasRole('owner') && !in_array($user->getId(), $input->ids)) {
+            $owner_remains = TRUE;
+            break;
+          }
+        }
+        if (!$owner_remains) {
+          $rd->addError('You have to leave at least one user with the Owner role intact.');
+        }
+        else {
+          if(!User::deleteAll($input->ids)) {
+            $rd->addError('No users were deleted.');
+          }
+        }
+      }
+    }
+
+    return $rd->toResponse();
+  }
+
   /**
    * {@inheritdoc}
    */

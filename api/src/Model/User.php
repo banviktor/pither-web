@@ -48,6 +48,15 @@ class User extends Model {
   }
 
   /**
+   * @param int[] $ids
+   *
+   * @return bool
+   */
+  public static function deleteAll(array $ids) {
+    return static::$db->executeUpdate("DELETE FROM `users` WHERE `id` IN (?)", [implode(', ', $ids)]) > 0;
+  }
+
+  /**
    * @param string $user
    * @param string $pass
    *
@@ -298,6 +307,15 @@ class User extends Model {
    */
   public function hasPermissions(array $permissions) {
     return count(array_intersect(array_keys($this->getPerms()), $permissions)) >= count($permissions);
+  }
+
+  /**
+   * @param string $role_id
+   *
+   * @return mixed
+   */
+  public function hasRole($role_id) {
+    return in_array($role_id, $this->roles);
   }
 
   /**

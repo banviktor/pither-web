@@ -8,6 +8,37 @@ angular.module('PiTher').controller('UserListController', ['$scope', '$routePara
     unit: 'c'
   };
 
+  this.deleteSelected = function() {
+    var delUsers = [];
+    for (var i = 0; i < controller.users.length; ++i) {
+      var id = controller.users[i].id;
+      if (controller.selected.hasOwnProperty(id) && controller.selected[id] == true) {
+        delUsers.push(id);
+      }
+    }
+
+    $http({
+      method: 'DELETE',
+      url: 'api/users',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {ids: delUsers}
+    }).then(
+      function successCallback(response) {
+        $scope.clearNotifications();
+        if (response.data.success) {
+          controller.refreshList();
+        }
+        else {
+          $scope.notifications.danger = response.data.errors;
+        }
+      },
+      function errorCallback(response) {
+        $scope.notifications.danger = response.data.errors;
+      }
+    );
+  };
   this.selectAll = function() {
     controller.selected = {};
     for (var i = 0; i < controller.users.length; ++i) {
