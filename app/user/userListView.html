@@ -12,6 +12,7 @@
 <table class="table table-responsive" ng-show="userListCtrl.action == 'list'">
   <thead>
   <tr>
+    <th><input type="checkbox" ng-change="userListCtrl.selectAll()" ng-model="userListCtrl.allSelected"/> </th>
     <th>ID</th>
     <th>Name</th>
     <th>E-mail</th>
@@ -24,6 +25,7 @@
   </thead>
   <tbody ng-repeat="user in userListCtrl.users">
   <tr>
+    <td><input type="checkbox" name="selected" value="{{ user.id }}" ng-model="userListCtrl.selected[user.id]"/></td>
     <td>{{ user.id }}</td>
     <td><a ng-href="#/users/{{ user.id }}">{{ user.name }}</a></td>
     <td>{{ user.email }}</td>
@@ -37,27 +39,27 @@
 </table>
 
 <!-- Add user form -->
-<form class="form-user form-horizontal" ng-submit="userListCtrl.addUser()" ng-show="userListCtrl.action == 'add'"
+<form class="form-user form-horizontal form-password-confirm" ng-submit="userListCtrl.addUser()" ng-show="userListCtrl.action == 'add'"
       novalidate>
   <fieldset class="form-group">
     <label class="col-sm-3 control-label">Name</label>
     <div class="col-sm-9">
-      <input class="form-control" id="name" type="text" placeholder="Name" ng-model="userListCtrl.newUser.name"/>
+      <input class="form-control" id="name" type="text" placeholder="Name" ng-model="userListCtrl.newUser.name" required/>
     </div>
   </fieldset>
   <fieldset class="form-group">
     <label class="col-sm-3 control-label">E-mail</label>
     <div class="col-sm-9">
-      <input class="form-control" id="email" type="email" placeholder="E-mail" ng-model="userListCtrl.newUser.email"/>
+      <input class="form-control" id="email" type="email" placeholder="E-mail" ng-model="userListCtrl.newUser.email" required/>
     </div>
   </fieldset>
   <fieldset class="form-group">
     <label class="col-sm-3 control-label">Password</label>
     <div class="col-sm-9">
       <input class="form-control" id="pass" type="password" placeholder="Password"
-             ng-model="userListCtrl.newUser.pass"/>
+             ng-model="userListCtrl.newUser.pass" required/>
       <input class="form-control" type="password" placeholder="Confirm password"
-             ng-model="userListCtrl.newUser.pass_confirm" compare-to="userListCtrl.newUser.pass"/>
+             ng-model="userListCtrl.newUser.pass_confirm" compare-to="userListCtrl.newUser.pass" required/>
     </div>
   </fieldset>
   <fieldset class="form-group">
