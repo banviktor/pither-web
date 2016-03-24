@@ -17,20 +17,19 @@ angular.module('PiTher')
       }
     };
   })
-  .directive('ngConfirmMessage', [
-    function () {
-      return {
-        priority: 1,
-        restrict: 'A',
-        link: function (scope, element, attr) {
-          var msg = attr.ngConfirmMessage || "Are you sure?";
-          var clickAction = attr.ngConfirmAction;
-          element.bind('click', function (event) {
-            if (window.confirm(msg)) {
-              scope.$eval(clickAction)
-            }
-          });
-        }
-      };
-    }])
+  .directive('ngConfirmMessage', function () {
+    return {
+      priority: 1,
+      restrict: 'A',
+      link: function (scope, element, attr) {
+        var msg = attr.ngConfirmMessage || "Are you sure?";
+        var clickAction = attr.ngConfirmAction;
+        element.bind('click', function (event) {
+          if (window.confirm(msg)) {
+            scope.$eval(clickAction)
+          }
+        });
+      }
+    };
+  })
 ;

@@ -6,7 +6,7 @@ angular.module('PiTher').controller('NotificationController', ['$scope', functio
     danger: []
   };
 
-  $scope.clearNotifications = function() {
+  $scope.clearNotifications = function () {
     $scope.notifications = {
       success: [],
       info: [],

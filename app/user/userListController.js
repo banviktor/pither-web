@@ -8,7 +8,7 @@ angular.module('PiTher').controller('UserListController', ['$scope', '$routePara
     unit: 'c'
   };
 
-  this.deleteSelected = function() {
+  this.deleteSelected = function () {
     var delUsers = [];
     for (var i = 0; i < controller.users.length; ++i) {
       var id = controller.users[i].id;
@@ -39,7 +39,7 @@ angular.module('PiTher').controller('UserListController', ['$scope', '$routePara
       }
     );
   };
-  this.selectAll = function() {
+  this.selectAll = function () {
     controller.selected = {};
     for (var i = 0; i < controller.users.length; ++i) {
       var id = controller.users[i].id;
