@@ -16,6 +16,11 @@ angular.module('PiTher').config(['$routeProvider', function ($routeProvider) {
       controller: 'UserController',
       controllerAs: 'userCtrl'
     })
+    .when('/settings', {
+      templateUrl: 'app/settings/settingsView.html',
+      controller: 'SettingsController',
+      controllerAs: 'settingsCtrl'
+    })
     .otherwise({
       redirectTo: '/'
     });

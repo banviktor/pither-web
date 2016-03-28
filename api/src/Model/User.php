@@ -85,7 +85,12 @@ class User extends Model {
    * @return \PiTher\Model\User
    */
   public static function anonymous() {
-    return new User(0, 'Anonymous', '', '', 'c', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+    $unit = 'c';
+    $unit_setting = Setting::load('default_unit');
+    if ($unit_setting !== NULL) {
+      $unit = $unit_setting->getValue();
+    }
+    return new User(0, 'Anonymous', '', '', $unit, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
   }
 
   /** @var int $id */

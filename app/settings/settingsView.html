@@ -1,0 +1,40 @@
+<notification></notification>
+<div ng-show="hasPermission('manage_settings')">
+  <form name="settingsForm" class="form-horizontal" ng-submit="settingsForm.$valid && settingsCtrl.submit()" novalidate>
+    <fieldset class="form-group">
+      <label for="fallback_temp" class="col-sm-3 control-label">Fallback temperature</label>
+      <div class="col-sm-9">
+        <input id="fallback_temp" type="text" class="form-control" ng-model="settingsCtrl.settings.fallback_temp" required/>
+      </div>
+    </fieldset>
+    <fieldset class="form-group">
+      <label class="col-sm-3 control-label">Default temperature unit</label>
+      <div class="col-sm-9">
+        <div class="radio">
+          <label>
+            <input name="default_unit" id="unitC" type="radio" value="c" ng-model="settingsCtrl.settings.default_unit">
+            Celsius
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input name="default_unit" id="unitF" type="radio" value="f" ng-model="settingsCtrl.settings.default_unit">
+            Fahrenheit
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input name="default_unit" id="unitK" type="radio" value="k" ng-model="settingsCtrl.settings.default_unit">
+            Kelvin
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-default">Save</button>
+      </div>
+    </div>
+  </form>
+  {{ settingsForm.$valid }}
+</div>

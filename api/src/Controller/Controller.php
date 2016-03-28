@@ -60,6 +60,7 @@ abstract class Controller {
       ],
       'put' => [
         $route . '/{id}' => 'update',
+        $route => 'updateAll',
       ],
       'delete' => [
         $route => 'deleteAll',

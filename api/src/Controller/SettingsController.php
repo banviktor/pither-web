@@ -7,6 +7,7 @@
 namespace PiTher\Controller;
 
 use PiTher\Model\Setting;
+use PiTher\ResponseData;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,43 +21,73 @@ class SettingsController extends Controller {
    * {@inheritdoc}
    */
   public function getAll(Request $request, Application $app) {
-    $this->checkPermissions(['access_settings']);
-    $settings = [];
-    foreach (Setting::loadAll() as $setting) {
-      $settings[] = $setting->get();
+    $rd = new ResponseData();
+
+    if (!$this->checkPermissions(['access_settings'])) {
+      $rd->addPermissionError('access_settings');
     }
-    return $app->json($settings);
+    else {
+      $settings = [];
+      foreach (Setting::loadAll() as $setting) {
+        $settings[$setting->getId()] = $setting->getValue();
+      }
+      $rd->setData($settings);
+    }
+
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
   public function get(Request $request, Application $app) {
-    $this->checkPermissions(['access_settings']);
-    $id = $request->get('id');
+    $rd = new ResponseData();
 
-    $setting = Setting::load($id);
-    if (empty($setting)) {
-      return $app->json(FALSE);
+    if (!$this->checkPermissions(['access_settings'])) {
+      $rd->addPermissionError('access_settings');
+    }
+    else {
+      $id = $request->get('id');
+      $setting = Setting::load($id);
+      if ($setting !== NULL) {
+        $rd->setData($setting->getValue());
+      }
+      else {
+        $rd->addError("Setting does not exist.");
+      }
     }
 
-    return $app->json($setting->getValue());
+    return $rd->toResponse();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function update(Request $request, Application $app) {
-    $this->checkPermissions(['access_settings', 'manage_settings']);
-    $id = $request->get('id');
-    $value = $request->getContent();
+  public function updateAll(Request $request, Application $app) {
+    $rd = new ResponseData();
 
-    $setting = Setting::load($id);
-    if (empty($setting)) {
-      return $app->json(FALSE);
+    if (!$this->checkPermissions(['access_settings', 'manage_settings'])) {
+      $rd->addPermissionError('manage settings');
+    }
+    else {
+      $input = $this->getInput($request, ['settings']);
+      if ($input !== NULL) {
+        foreach ($input->settings as $key => $value) {
+          $setting = Setting::load($key);
+          if ($setting !== NULL) {
+            $setting->setValue($value)->save();
+          }
+          else {
+            $rd->addError("Setting $key not found.");
+          }
+        }
+      }
+      else {
+        $rd->addError("Invalid request.");
+      }
     }
 
-    return $app->json($setting->setValue($value)->save());
+    return $rd->toResponse();
   }
 
 }
