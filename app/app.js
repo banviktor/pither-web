@@ -1,1 +1,1 @@
-angular.module('PiTher', ['ngRoute']);
+angular.module('PiTher', ['ngRoute', 'ui.calendar']);
