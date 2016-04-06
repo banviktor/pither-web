@@ -137,13 +137,15 @@ class UsersController extends Controller {
     $rd = new ResponseData();
 
     $input = $this->getInput($request, ['id'], ['email', 'name', 'pass', 'unit', 'roles']);
-    $user = User::load($input->id);
-
-    if ($user !== NULL) {
-      $manage_users = $this->checkPermissions(['manage_users']);
-      $self = User::currentUser()->getId() == $user->getId();
-      if (!$manage_users && !$self) {
-        $rd->addPermissionError('manage users');
+    $manage_users = $this->checkPermissions(['manage_users']);
+    $self = User::currentUser()->getId() == $input->id;
+    if (!$manage_users && !$self) {
+      $rd->addPermissionError('manage users');
+    }
+    else {
+      $user = User::load($input->id);
+      if ($user === NULL) {
+        $rd->addError('User not found.');
       }
       else {
         if (isset($input->email) && !$user->setEmail($input->email)) {
@@ -180,9 +182,6 @@ class UsersController extends Controller {
           $rd->addError('Failed to update user.');
         }
       }
-    }
-    else {
-      $rd->addError('User not found.');
     }
 
     return $rd->toResponse();
