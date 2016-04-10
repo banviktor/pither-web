@@ -1,7 +1,25 @@
-<div class="col-sm-3">
+<notification></notification>
+<div class="col-sm-2">
   <h2>Tools</h2>
+  <h3>Add rule</h3>
+  <label>Rule</label>
+  <a id="new-event" data-event='1' data-duration='02:00' data-stick='false' class="fc-time-grid-event fc-v-event fc-event fc-start fc-end event-rule event-rule fc-draggable fc-resizable" style="border-color: orange; color: white; z-index: 1; background-color: orange;">
+    <div class="fc-content">
+      <div class="fc-time"><span>TBD</span></div>
+      <div class="fc-title">{{newEvent.temp}}</div>
+    </div>
+    <div class="fc-bg"></div>
+  </a>
+  <label for="new-event-temp">Temperature</label>
+  <input id="new-event-temp" type="number" step="0.5" ng-model="newEvent.temp" size="5" />
+  <h3>Actions</h3>
+  <form class="form-rule-manage">
+    <button class="btn btn-success form-control" ng-click="save()">Save</button>
+    <button class="btn btn-warning form-control" ng-click="reset()">Reset</button>
+    <button class="btn btn-danger form-control" ng-click="clear()">Clear all</button>
+  </form>
 </div>
-<div class="col-sm-9">
+<div class="col-sm-10">
   <h2>Rules</h2>
-  <div ui-calendar="calendarConfig" ng-model="eventSources"></div>
+  <div ui-calendar="calendarConfig" ng-model="eventSources" calendar="calendar"></div>
 </div>

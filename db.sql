@@ -77,6 +77,16 @@ CREATE TABLE `rules` (
   `temp` decimal(4,1) NOT NULL,
   PRIMARY KEY (`id`)
 );
+INSERT INTO `rules` VALUES( 1, 1, '05:00', '08:00', 21.5);
+INSERT INTO `rules` VALUES( 2, 1, '16:00', '23:00', 21.5);
+INSERT INTO `rules` VALUES( 3, 2, '05:00', '08:00', 21.5);
+INSERT INTO `rules` VALUES( 4, 2, '16:00', '23:00', 21.5);
+INSERT INTO `rules` VALUES( 5, 3, '05:00', '08:00', 21.5);
+INSERT INTO `rules` VALUES( 6, 3, '16:00', '23:00', 21.5);
+INSERT INTO `rules` VALUES( 7, 4, '05:00', '08:00', 21.5);
+INSERT INTO `rules` VALUES( 8, 4, '16:00', '23:00', 21.5);
+INSERT INTO `rules` VALUES( 9, 5, '05:00', '08:00', 21.5);
+INSERT INTO `rules` VALUES(10, 5, '16:00', '23:00', 21.5);
 
 DROP TABLE IF EXISTS `sensor_log`;
 CREATE TABLE `sensor_log` (

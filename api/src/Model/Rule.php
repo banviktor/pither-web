@@ -5,6 +5,7 @@
  */
 
 namespace PiTher\Model;
+use Doctrine\DBAL\DBALException;
 
 /**
  * Class Rule
@@ -124,8 +125,9 @@ class Rule extends Model {
   public function setDay($day) {
     if ($day >= 1 && $day <= 7) {
       $this->day = $day;
+      return TRUE;
     }
-    return $this;
+    return FALSE;
   }
 
   /**
@@ -135,7 +137,7 @@ class Rule extends Model {
    */
   public function setStart($start) {
     $this->start = $start;
-    return $this;
+    return TRUE;
   }
 
   /**
@@ -145,7 +147,7 @@ class Rule extends Model {
    */
   public function setEnd($end) {
     $this->end = $end;
-    return $this;
+    return TRUE;
   }
 
   /**
@@ -155,7 +157,7 @@ class Rule extends Model {
    */
   public function setTemp($temp) {
     $this->temp = $temp;
-    return $this;
+    return TRUE;
   }
 
   /**
@@ -185,7 +187,14 @@ class Rule extends Model {
         }
         return TRUE;
       });
-      return static::$db->insert('rules', $data) > 0;
+      try {
+        static::$db->insert('rules', $data);
+        $this->id = static::$db->lastInsertId();
+        return TRUE;
+      }
+      catch (DBALException $e) {
+        return FALSE;
+      }
     }
     return static::$db->update('rules', $data, ['id' => $this->id]) > 0;
   }
