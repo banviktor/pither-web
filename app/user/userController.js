@@ -16,6 +16,9 @@ angular.module('PiTher').controller('UserController', ['$scope', '$routeParams',
       $scope.clearNotifications();
       if (response.data.success) {
         controller.user = response.data.data;
+        if (controller.user.roles.length == 0) {
+          controller.user.roles = {};
+        }
       }
       else {
         $scope.notifications.danger = response.data.errors;
