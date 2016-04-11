@@ -199,6 +199,7 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
       $scope.notifications.success = ['Changes saved successfully.'];
     }
     $scope.modified = [];
+    $scope.removed = [];
   };
   $scope.reset = function () {
     $scope.rules.events = [];
