@@ -1,5 +1,8 @@
 angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCalendarConfig', function ($scope, $http, uiCalendarConfig) {
-  var calendar = uiCalendarConfig.calendars.calendar;
+  var controller = this;
+  this.calendar = function() {
+    return uiCalendarConfig.calendars.calendar;
+  };
   $scope.rules = {
     className: 'event-rule',
     events: [],
@@ -68,6 +71,14 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
           $scope.modified.push(event.id);
         }
       }
+    },
+    eventRender: function (event, element) {
+      element.dblclick(function () {
+        controller.calendar().fullCalendar('removeEvents', event._id);
+        if (event.id !== undefined) {
+          $scope.removed.push(event.id);
+        }
+      });
     }
   };
   $scope.eventSources = [$scope.rules];
@@ -75,64 +86,9 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
     temp: 21.5
   };
   $scope.modified = [];
+  $scope.removed = [];
 
-  $scope.loadRules = function () {
-    $http.get('api/rules').then(
-      function successCallback(response) {
-        if (response.data.success) {
-          for (var i = 0; i < response.data.data.length; ++i) {
-            $scope.rules.events.push($scope.modelToEvent(response.data.data[i]));
-          }
-        } else {
-          $scope.clearNotifications();
-          $scope.notifications.danger = response.data.errors;
-        }
-      },
-      function errorCallback(response) {
-        $scope.clearNotifications();
-        $scope.notifications.danger = response.data.errors;
-      }
-    );
-  };
-  $scope.loadRules();
-  $('#new-event').each(function () {
-    $(this).data('event', {
-      title: '',
-      stick: true
-    });
-    $(this).draggable({
-      zIndex: 999,
-      revert: true,
-      revertDuration: 0
-    });
-  });
-
-  $scope.clear = function () {
-    $http({
-      method: 'DELETE',
-      url: 'api/rules'
-    }).then(
-      function successCallback(response) {
-        $scope.clearNotifications();
-        if (response.data.success) {
-          $scope.rules.events = [];
-          calendar.fullCalendar('refetchEvents');
-        }
-        else {
-          $scope.notifications.danger = response.data.errors;
-        }
-      },
-      function errorCallback(response) {
-        $scope.notifications.danger = response.data.errors;
-      }
-    );
-  };
-  $scope.reset = function () {
-    $scope.rules.events = [];
-    $scope.eventSources = [$scope.rules];
-    $scope.loadRules();
-  };
-  $scope.eventToModel = function (event) {
+  controller.eventToRule = function (event) {
     var start = moment(event.start);
     var end = moment(event.end);
     return {
@@ -143,7 +99,7 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
       temp: event.title
     };
   };
-  $scope.modelToEvent = function (model) {
+  controller.ruleToEvent = function (model) {
     var start_orig = model.start.split(':');
     var start = moment('2016-02-01 01:00:00')
       .add(model.day - 1, 'days')
@@ -163,12 +119,31 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
       title: model.temp
     };
   };
+  controller.loadRules = function () {
+    $http.get('api/rules').then(
+      function successCallback(response) {
+        if (response.data.success) {
+          for (var i = 0; i < response.data.data.length; ++i) {
+            $scope.rules.events.push(controller.ruleToEvent(response.data.data[i]));
+          }
+        } else {
+          $scope.clearNotifications();
+          $scope.notifications.danger = response.data.errors;
+        }
+      },
+      function errorCallback(response) {
+        $scope.clearNotifications();
+        $scope.notifications.danger = response.data.errors;
+      }
+    );
+  };
   $scope.save = function () {
     $scope.clearNotifications();
     var fail = false;
     for (var i = 0; i < $scope.rules.events.length; ++i) {
-      var event = $scope.eventToModel($scope.rules.events[i]);
+      var event = controller.eventToRule($scope.rules.events[i]);
       if (event.id == undefined) {
+        // Insert a new event.
         delete event.id;
         $http.post('api/rules', event, {i: i}).then(
           function successCallback(response) {
@@ -186,7 +161,26 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
           }
         );
       }
+      else if ($scope.removed.indexOf(event.id) != -1) {
+        // Delete an event.
+        $http({
+          url: 'api/rules/' + event.id,
+          method: 'delete'
+        }).then(
+          function successCallback(response) {
+            if (!response.data.success) {
+              fail = true;
+              $scope.notifications.danger = response.data.errors;
+            }
+          },
+          function errorCallback(response) {
+            fail = true;
+            $scope.notifications.danger = response.data.errors;
+          }
+        );
+      }
       else if ($scope.modified.indexOf(event.id) != -1) {
+        // Update an event.
         $http.put('api/rules/' + event.id, event).then(
           function successCallback(response) {
             if (!response.data.success) {
@@ -206,4 +200,38 @@ angular.module('PiTher').controller('RulesController', ['$scope', '$http', 'uiCa
     }
     $scope.modified = [];
   };
+  $scope.reset = function () {
+    $scope.rules.events = [];
+    $scope.eventSources = [$scope.rules];
+    controller.loadRules();
+  };
+  $scope.clear = function () {
+    $http({
+      method: 'DELETE',
+      url: 'api/rules'
+    }).then(
+      function successCallback(response) {
+        $scope.clearNotifications();
+        if (response.data.success) {
+          $scope.rules.events = [];
+        }
+        else {
+          $scope.notifications.danger = response.data.errors;
+        }
+      },
+      function errorCallback(response) {
+        $scope.notifications.danger = response.data.errors;
+      }
+    );
+  };
+
+  controller.loadRules();
+  $('#new-event').data('event', {
+    title: '',
+    stick: true
+  }).draggable({
+    zIndex: 999,
+    revert: true,
+    revertDuration: 0
+  });
 }]);
