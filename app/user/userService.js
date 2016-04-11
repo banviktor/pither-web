@@ -7,6 +7,9 @@ angular.module('PiTher').factory('user', ['$rootScope', '$http', function ($root
     perms: {anon: true}
   };
 
+  service.isAnon = function () {
+    return service.user.id == 0;
+  };
   service.hasRole = function (role) {
     return service.user.roles.hasOwnProperty(role);
   };

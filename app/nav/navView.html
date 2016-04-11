@@ -19,9 +19,9 @@
         <li><a ng-show="user().hasPermission('access_settings')" href="#/settings">Settings</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li ng-show="user().user.id == 0"><a href="#/login">Log in</a></li>
-        <li ng-show="user().user.id != 0"><a ng-href="#/users/{{ user().user.id }}">Profile</a></li>
-        <li ng-show="user().user.id != 0"><a href="#/logout" ng-click="user().logout()">Log out</a></li>
+        <li ng-show="user().isAnon()"><a href="#/login">Log in</a></li>
+        <li ng-show="!user().isAnon()"><a ng-href="#/users/{{ user().user.id }}">Profile</a></li>
+        <li ng-show="!user().isAnon()"><a href="#/logout" ng-click="user().logout()">Log out</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>

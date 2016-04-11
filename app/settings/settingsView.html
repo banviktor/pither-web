@@ -1,5 +1,5 @@
 <notification></notification>
-<div ng-show="hasPermission('manage_settings')">
+<div ng-show="user().hasPermission('manage_settings')">
   <form name="settingsForm" class="form-horizontal" ng-submit="settingsForm.$valid && settingsCtrl.submit()" novalidate>
     <fieldset class="form-group">
       <label for="fallback_temp" class="col-sm-3 control-label">Fallback temperature</label>
