@@ -1,4 +1,4 @@
-angular.module('PiTher').controller('LoginController', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+angular.module('PiTher').controller('LoginController', ['$http', '$location', 'user', function ($http, $location, user) {
   var controller = this;
   this.formData = {};
   this.formError = '';
@@ -8,7 +8,7 @@ angular.module('PiTher').controller('LoginController', ['$scope', '$http', '$loc
       function successCallback(response) {
         if (response.data.success == true) {
           $location.path('/');
-          $scope.refreshCurrentUser();
+          user.reload();
         }
         else {
           controller.formData = {};

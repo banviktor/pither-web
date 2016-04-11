@@ -13,15 +13,15 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li><a href="#/">Home</a></li>
-        <li><a ng-show="hasPermission('access_rules')" href="#/rules">Rules</a></li>
-        <li><a ng-show="hasPermission('manage_users')" href="#/users">Users</a></li>
-        <li><a ng-show="hasPermission('access_sensor_log')" href="#/graphs">Graphs</a></li>
-        <li><a ng-show="hasPermission('access_settings')" href="#/settings">Settings</a></li>
+        <li><a ng-show="user().hasPermission('access_rules')" href="#/rules">Rules</a></li>
+        <li><a ng-show="user().hasPermission('manage_users')" href="#/users">Users</a></li>
+        <li><a ng-show="user().hasPermission('access_sensor_log')" href="#/graphs">Graphs</a></li>
+        <li><a ng-show="user().hasPermission('access_settings')" href="#/settings">Settings</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li ng-show="currentUser.id == 0"><a href="#/login">Log in</a></li>
-        <li ng-show="currentUser.id != 0"><a ng-href="#/users/{{currentUser.id}}">Profile</a></li>
-        <li ng-show="currentUser.id != 0"><a href="#/logout" ng-click="logout()">Log out</a></li>
+        <li ng-show="user().user.id == 0"><a href="#/login">Log in</a></li>
+        <li ng-show="user().user.id != 0"><a ng-href="#/users/{{ user().user.id }}">Profile</a></li>
+        <li ng-show="user().user.id != 0"><a href="#/logout" ng-click="user().logout()">Log out</a></li>
       </ul>
     </div><!--/.nav-collapse -->
   </div>
