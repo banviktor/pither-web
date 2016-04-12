@@ -108,37 +108,37 @@ class Override extends Model {
   /**
    * @param string|int $start
    *
-   * @return $this
+   * @return bool
    */
   public function setStart($start) {
     if (is_numeric($start)) {
       $start = date('Y-m-d H:i:s', $start);
     }
     $this->start = $start;
-    return $this;
+    return TRUE;
   }
 
   /**
    * @param string|int $end
    *
-   * @return $this
+   * @return bool
    */
   public function setEnd($end) {
     if (is_numeric($end)) {
       $end = date('Y-m-d H:i:s', $end);
     }
     $this->end = $end;
-    return $this;
+    return TRUE;
   }
 
   /**
    * @param float $temp
    *
-   * @return $this
+   * @return bool
    */
   public function setTemp($temp) {
     $this->temp = $temp;
-    return $this;
+    return TRUE;
   }
 
   /**

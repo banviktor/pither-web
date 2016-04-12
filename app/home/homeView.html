@@ -1,0 +1,57 @@
+<notification></notification>
+<div class="col-sm-3">
+  <h2>Override</h2>
+  <details open>
+    <summary>Quick override</summary>
+    <form>
+      <div class="form-group">
+        <label for="q_temp">Target temperature</label>
+        <input id="q_temp" class="form-control" ng-model="quickOverride.temp" type="number" style="width: 6em" size="2" min="0" max="24" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label for="q_start">When</label>
+        <select id="q_start" class="form-control" ng-model="quickOverride.after">
+          <option value="0">now</option>
+          <option value="60">1hr later</option>
+          <option value="120">2hrs later</option>
+          <option value="240">4hrs later</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="q_end">Duration (hrs)</label>
+        <input id="q_end" class="form-control" ng-model="quickOverride.duration" type="number" style="width: 6em" size="2" min="0" max="24" />
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" ng-click="addQuickOverride()">Set</button>
+      </div>
+    </form>
+  </details>
+  <details>
+    <summary>Planned override</summary>
+    <form>
+      <div class="form-group">
+        <label for="p_temp">Target temperature</label>
+        <input id="p_temp" class="form-control" ng-model="plannedOverride.temp" type="number" style="width: 6em" size="2" min="0" max="24" step="0.5" />
+      </div>
+      <div class="form-group">
+        <label for="p_start">From</label>
+        <input id="p_start" class="form-control" ng-model="plannedOverride.start" type="datetime-local" />
+      </div>
+      <div class="form-group">
+        <label for="p_end">To</label>
+        <input id="p_end" class="form-control" ng-model="plannedOverride.end" type="datetime-local" />
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary" ng-click="addPlannedOverride()">Set</button>
+      </div>
+    </form>
+  </details>
+  <details>
+    <summary>Manage overrides</summary>
+    <button class="btn btn-danger form-control" ng-click="clear()">Clear all</button>
+  </details>
+</div>
+<div class="col-sm-9">
+  <h2>Rules</h2>
+  <div ui-calendar="calendarConfig" ng-model="eventSources" calendar="calendar"></div>
+</div>
