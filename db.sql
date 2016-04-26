@@ -1,7 +1,21 @@
-DROP TABLE IF EXISTS `heating_log`;
-CREATE TABLE `heating_log` (
+DROP TABLE IF EXISTS `log_heating`;
+CREATE TABLE `log_heating` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `event` bit(1) NOT NULL,
+  `state` bit(1) NOT NULL,
+  PRIMARY KEY (`date`)
+);
+
+DROP TABLE IF EXISTS `log_target`;
+CREATE TABLE `log_target` (
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `temp` decimal(4,1) NOT NULL,
+  PRIMARY KEY (`date`)
+);
+
+DROP TABLE IF EXISTS `log_temp`;
+CREATE TABLE `log_temp` (
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `temp` decimal(4,1) NOT NULL,
   PRIMARY KEY (`date`)
 );
 
@@ -87,13 +101,6 @@ INSERT INTO `rules` VALUES( 7, 4, '05:00', '08:00', 21.5);
 INSERT INTO `rules` VALUES( 8, 4, '16:00', '23:00', 21.5);
 INSERT INTO `rules` VALUES( 9, 5, '05:00', '08:00', 21.5);
 INSERT INTO `rules` VALUES(10, 5, '16:00', '23:00', 21.5);
-
-DROP TABLE IF EXISTS `sensor_log`;
-CREATE TABLE `sensor_log` (
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `temp` decimal(4,1) NOT NULL,
-  PRIMARY KEY (`date`)
-);
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
