@@ -1,0 +1,25 @@
+<notification></notification>
+
+<h2>Temperature history</h2>
+
+<ul class="nav nav-tabs">
+  <li role="presentation" ng-class="{active: view == '24h'}">
+    <a ng-click="changeView('24h')" href="">Last 24 hours</a>
+  </li>
+  <li role="presentation" ng-class="{active: view == 'week'}">
+    <a ng-click="changeView('week')" href="">Last 7 days</a>
+  </li>
+  <li role="presentation" ng-class="{active: view == 'month'}">
+    <a ng-click="changeView('month')" href="">Last 28 days</a>
+  </li>
+</ul>
+
+<div ng-show="view == '24h'">
+  <canvas id="chart_24h" class="chart chart-line" chart-data="data.v24h" chart-labels="labels.v24h" chart-legend="true" chart-series="series.v24h" chart-options="options"></canvas>
+</div>
+<div ng-show="view == 'week'">
+  <canvas id="chart_week" class="chart chart-line" chart-data="data.vweek" chart-labels="labels.vweek" chart-legend="true" chart-series="series.vweek" chart-options="options"></canvas>
+</div>
+<div ng-show="view == 'month'">
+  <canvas id="chart_month" class="chart chart-line" chart-data="data.vmonth" chart-labels="labels.vmonth" chart-legend="true" chart-series="series.vmonth" chart-options="options"></canvas>
+</div>

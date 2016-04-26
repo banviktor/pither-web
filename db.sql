@@ -1,10 +1,3 @@
-DROP TABLE IF EXISTS `log_heating`;
-CREATE TABLE `log_heating` (
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `state` bit(1) NOT NULL,
-  PRIMARY KEY (`date`)
-);
-
 DROP TABLE IF EXISTS `log_target`;
 CREATE TABLE `log_target` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

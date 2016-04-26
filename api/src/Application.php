@@ -6,12 +6,10 @@
 
 namespace PiTher;
 
-use PiTher\Controller\HeatingLogController;
+use PiTher\Controller\LogController;
 use PiTher\Controller\OverridesController;
 use PiTher\Controller\RulesController;
 use PiTher\Controller\SettingsController;
-use PiTher\Controller\TargetLogController;
-use PiTher\Controller\TemperatureLogController;
 use PiTher\Controller\UsersController;
 use PiTher\Model\Model;
 use Silex\Provider\DoctrineServiceProvider;
@@ -41,12 +39,10 @@ class Application extends \Silex\Application {
     ));
 
     Model::init($this);
-    HeatingLogController::init($this);
+    LogController::init($this);
     OverridesController::init($this);
     RulesController::init($this);
     SettingsController::init($this);
-    TargetLogController::init($this);
-    TemperatureLogController::init($this);
     UsersController::init($this);
 
     $this->error(function($exception) {

@@ -30,6 +30,11 @@ angular.module('PiTher').config(['$routeProvider', function ($routeProvider) {
       controller: 'RulesController',
       controllerAs: 'rulesCtrl'
     })
+    .when('/charts', {
+      templateUrl: 'app/chart/chartView.html',
+      controller: 'ChartController',
+      controllerAs: 'chartCtrl'
+    })
     .otherwise({
       redirectTo: '/'
     });
